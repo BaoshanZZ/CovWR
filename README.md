@@ -28,14 +28,13 @@ R/
   run_simulation.R          Single-process or local parallel runner
   run_scenario_batch.R      Slurm array scenario runner
   combine_batch_results.R   Slurm result combiner
-  plot_simulation_results.R Report figures
 
-main (5).tex                Manuscript draft
 submit_fadj_array.sbatch    Slurm array submission script
 combine_fadj_results.sbatch Slurm combine script
 ```
 
-Large simulation outputs and Slurm logs are intentionally excluded from GitHub.
+Large simulation outputs, Slurm logs, local manuscript drafts, and local plotting helpers are
+intentionally excluded from GitHub.
 
 ## R Package Requirements
 
@@ -77,22 +76,6 @@ The combined output directory is currently configured in the scripts as:
 simulation_output_fadj_n1000/
 ```
 
-## Plotting
-
-Generate all estimand figures:
-
-```bash
-Rscript R/plot_simulation_results.R --input-dir=simulation_output_fadj_n1000
-```
-
-Generate LWR-only figures:
-
-```bash
-Rscript R/plot_simulation_results.R --input-dir=simulation_output_fadj_n1000 --estimand=LWR
-```
-
-Figures are written to `figures/` or `figures_lwr/` inside the selected simulation output directory.
-
 ## Summary Metrics
 
 `simulation_summary.csv` includes:
@@ -105,4 +88,3 @@ Figures are written to `figures/` or `figures_lwr/` inside the selected simulati
 - `CP`: empirical coverage probability
 - `reject_rate`: empirical rejection rate
 - `PVR`: percent variance reduction relative to `UNADJ`
-

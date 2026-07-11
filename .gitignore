@@ -2,6 +2,10 @@
 simulation_output*/
 slurm_logs/
 
+# Manuscript and local plotting helper are kept locally but not versioned here
+main*.tex
+R/plot_simulation_results.R
+
 # R workspace/cache artifacts
 .Rhistory
 .RData
@@ -27,4 +31,3 @@ slurm_logs/
 .DS_Store
 Thumbs.db
 .vscode/
-
