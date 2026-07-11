@@ -1,0 +1,1403 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{natbib}
+\usepackage[english]{babel}
+\usepackage{arydshln}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb, soul}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{threeparttable}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{mathabx}
+\usepackage{appendix}
+\usepackage{graphicx}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{remark}{Remark}
+\newtheorem{corollary}{Corollary}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Pp}{\mathbb{P}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\op}{o_p}
+\newcommand{\Op}{O_p}
+\newcommand{\ind}{\mathbb{I}}
+\newcommand{\WR}{\operatorname{WR}}
+\newcommand{\logWR}{\operatorname{logWR}}
+
+
+\title{Model-Assisted Estimators for Marginal Win Ratio on Hierarchical Endpoints in Randomized Trials}
+\author{Baoshan Zhang, Tuo Wang, XXX}
+\date{June 2026}
+
+
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+\begin{itemize}
+    \item Why Hierarchical Endpoint and widely used 
+    \item WR as a popular estimand these days; Review of conditional/marginal WR/NB/WO. [\cite{mao2021class}] Unify all Win Measure
+    \item Point estimator of WR in RCT; But wasteful of baseline covaraite information; guarantee Efficiency gain via Cov Adj or Influence function Projection or SBW/EB. Model-assisted but not model-based. [\cite{zhang2025unified}]
+    \begin{itemize}
+        \item \citep{vermeulen2015increasing, scheidegger2026covariate} Augmented directly on U-statistics with a kernel pair $H(X_i, X_j)$ not subject-level $(A-e)b(\mathbf{X})$ as traditional Efficiency Gain Method. Also a model-assisted method and Although it uses a working model for the conditional probabilistic index, consistency and asymptotic normality of the resulting marginal estimator do not require this model to be correctly specified. But if it is, the estimator attains the semiparametric efficiency bound
+    \end{itemize}
+    \item \textbf{[BZ: We also can apply EB/SBW here as a comparison method]}
+    \item As long as comparison rule can be defined in protocol, pairwise win/loss/tie kernels are defined $\rightarrow$ influence function for marginal Win Statistics $\rightarrow$ RCT covariate adjustment first order no loss. \textbf{Influence function is the bridge we use here}
+\end{itemize}
+
+Estimand: marginal WR at fixed follow-up time $S$. (Restricted marginal WR \citep{mao2024defining})
+Primary method:
+Fixed S weeks, administrative censoring only, complete landmark measurements among survivors. This is the cleanest setting for the proposed subject-level IF projection method.
+
+Concerns regarding the interpretability and dependence on follow-up time and censoring distribution apply to both methods \citep{oakes2016win, dong2020win}. Our manuscript neither wants to address the debate nor these additional concerns, so does \citep{scheidegger2026covariate}
+
+Practical extension / discussion:
+If non-administrative dropout is non-negligible, then death/TTE censoring can be handled by IPCW, but ALSFRS-S/NfL landmark missingness requires an additional missing-data layer, such as IPCW, MI, or AIPW under MAR. This is a meaningful future extension, but it is outside the clean primary framework.
+
+Contribution
+\begin{enumerate}
+    \item General Endpoint Record + Protocol-defined kernels
+    \item Marginal Estimand. [cite FDA CovAdj Guidance]
+    \item Subject-level IF of WR (two-sample pairwise U-statistics Ratio)
+    \item RCT-IF projection adjustment with guaranteed no-loss
+\end{enumerate}
+Delivery
+\begin{enumerate}
+    \item Github repo
+    \item R Shinyapp?
+    \item R Package (no experience)
+\end{enumerate}
+
+
+\section{Notation and Unadjusted Estimator}
+\label{sec:unadjusted}
+
+\subsection{Data and observed outcomes}
+\label{subsec:data}
+We observe $N$ independent and identically distributed (i.i.d) subjects
+$$
+\mathcal{O}_i = (A_i, \mathbf{X}_i, \mathcal{D}_i) \sim \mathcal{P},\quad i = 1, \ldots, N,
+$$
+where $A_i \in \{0,1\}$ is the treatment indicator ($A_i = 1$ treatment, $A_i = 0$ control),
+$\mathbf{X}_i$ is a vector of baseline covariate, and $\mathcal{D}_i$ denotes the complete hierarchical endpoint (HE) record. The i.i.d.\ assumption is across subjects and places no
+restriction within a subject: under $\mathcal{P}$, the covariates and treatment are
+generated marginally with $A_i \perp \mathbf{X}_i$ and $\Pr(A_i=1)=e$ by randomization,
+while the HE arises from the conditional law $\mathcal{D}_i \mid (A_i, \mathbf{X}_i)$,
+which encodes the dependence of the outcome on treatment and covariates. Let $n_1 = \sum_{i=1}^{N} A_i$ and $n_0 = N - n_T$ denote the arm-specific sample sizes. Throughout, we assume the two arms grow at comparable rates, $n_1/N\to e\in(0,1)$ as
+$N\to\infty$.
+
+We adopt the U-statistics framework of \cite{bebu_large_2016}, \cite{dong_win_2023} and \cite{zhang2026forss} for HEs with mixed data types. The HE consists of $Q$ component endpoints observed over a fixed follow-up period $S$,
+ordered by clinical importance (or severity), and may differ in type (e.g., time-to-event,
+binary, continuous, count, or ordinal):
+\[
+\mathcal{D}_i = \{ D_{1i}, D_{2i}, \ldots, D_{Qi}; S \},
+\]
+where $D_{qi}$ is the observed value of the $q$th component for subject $i$.
+For a non-time-to-event component, $D_{qi}$ is the directly observed measurement.
+For a time-to-event component, let $T_{qi}$ denote the latent event time; under the fixed
+follow-up design, $S$ serves as a common administrative censoring time, and we observe both
+\[
+D_{qi} = \min(T_{qi}, S), \qquad \text{and} \quad \delta_{qi} = I(T_{qi} \le S),
+\]
+where $\delta_{qi}$ is the event indicator and $I(\cdot)$ the indicator function.
+Time-to-event components are thus compared up to the common design horizon $S$.
+Throughout we assume complete follow-up to $S$ (administrative censoring only) and no early-drop out. 
+
+\subsection{Pairwise comparison rules and kernels}
+\label{subsec:kernels}
+Win measures are based on pairwise comparisons between a treatment subject $i$ ($A_i = 1$)
+and a control subject $j$ ($A_j = 0$). Starting from the highest-priority outcome $D_1$,
+the pair is compared to determine the winner; if neither subject wins (a tie) on $D_1$,
+the comparison proceeds to $D_2$, and so on down the hierarchy until a winner is determined
+or the last endpoint $D_Q$ is reached without a winner, in which case the pair is declared
+an overall tie. For each component $q$, the win, loss, and tie indicators
+$W_q^{ij}$, $L_q^{ij}$, and $\Omega_q^{ij}$ are defined by data type as in
+Table~\ref{tab:comparison_rules}, where $W_q^{ij} \equiv W_q(D_i, D_j)$ etc.\ are
+functions of the ordered pair $(D_i, D_j)$.
+
+\begin{table}[ht]
+\begin{threeparttable}
+\caption{Pairwise comparison rules for winner, loser, and tie indicators by outcome data type.}
+\label{tab:comparison_rules}
+\footnotesize
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+\textbf{Outcome Data Type} & \textbf{Winning $\left(W_q^{ij}\right)$} & \textbf{Losing $\left(L_q^{ij}\right)$} & \textbf{Tie $\left(\Omega_q^{ij}\right)$} \\
+\midrule
+Binary & $I\!\left(D_{qi} > D_{qj}\right)$ & $I\!\left(D_{qi} < D_{qj}\right)$ & $I\!\left(D_{qi} = D_{qj}\right)$ \\
+\addlinespace
+Continuous/Ordinal/Count & $I\!\left( D_{qi} > D_{qj} + \epsilon_q \right)$ & $I\!\left(D_{qi} < D_{qj} - \epsilon_q\right)$ & $I\!\left(\big|D_{qi} - D_{qj}\big| \le \epsilon_q\right)$ \\
+\addlinespace
+Time-to-event & $\delta_{qj}\, I\!\left(D_{qi} > D_{qj} + \epsilon_q\right)$ & $\delta_{qi}\, I\!\left(D_{qi} < D_{qj} - \epsilon_q\right)$ & $\left(1 - W_q^{ij}\right)\!\left(1 - L_q^{ij}\right)$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+    \item $D_{qi}$ and $D_{qj}$ denote the $q$th outcome for treatment subject $i$ ($A_i=1$)
+    and control subject $j$ ($A_j=0$), respectively. $I(\cdot)$ is the indicator function.
+    The constant $\epsilon_q \ge 0$ is a pre-specified clinically meaningful threshold
+    required to declare a win on the $q$th outcome.
+\end{tablenotes}
+\end{center}
+\end{threeparttable}
+\end{table}
+
+Aggregating information across the hierarchy, the win and loss kernels are
+\begin{equation}
+\varphi_w(\mathcal{D}_i, \mathcal{D}_j) = W_1^{ij} + \sum_{q=2}^{Q}
+\left( \prod_{p=1}^{q-1} \Omega_p^{ij} \right) W_q^{ij},
+\qquad
+\varphi_l(\mathcal{D}_i, \mathcal{D}_j) = L_1^{ij} + \sum_{q=2}^{Q}
+\left( \prod_{p=1}^{q-1} \Omega_p^{ij} \right) L_q^{ij}.
+\label{eq:kernel_functions}
+\end{equation}
+%and the overall tie kernel is $\varphi_\Omega(\mathcal{D}_i, \mathcal{D}_j) = 1 - \varphi_w(\mathcal{D}_i, \mathcal{D}_j) - \varphi_l(\mathcal{D}_i, \mathcal{D}_j)$,
+Each pairwise comparison yields exactly one of three outcomes: win, loss, or tie.
+
+\subsection{Estimands and Unadjusted Estimators}
+\label{subsec:estimands}
+The marginal win, loss, and tie probabilities are defined as 
+\[
+\tau_w = E\!\left[\varphi_w(\mathcal{D}_i, \mathcal{D}_j) \mid A_i = 1, A_j = 0\right],
+\quad
+\tau_l = E\!\left[\varphi_l(\mathcal{D}_i, \mathcal{D}_j) \mid A_i = 1, A_j = 0\right],
+\]
+with $\tau_\Omega = 1-\tau_w - \tau_l$. The unadjusted empirical estimators are the two-sample U-statistics averaging over all $n_1 \times n_0$ treatment--control pairs via win and loss kernels defined in \eqref{eq:kernel_functions},
+\begin{equation}
+\bar{\tau}_\nu = \frac{1}{n_1 n_0} \sum_{i:\, A_i = 1} \sum_{j:\, A_j = 0} \varphi_\nu(\mathcal{D}_i, \mathcal{D}_j),
+\qquad \nu \in \{w, l\},
+\label{eq:u_statistics}
+\end{equation}
+with $\bar{\tau}_\Omega = 1 - \bar{\tau}_w - \bar{\tau}_l$.
+
+
+\subsection{Influence Functions of Unadjusted Estimators via H\'ajek Projection}
+Define the centered one-way conditional win/loss functions, for $\nu\in\{w,l\}$,
+\begin{align}
+    g_{\nu,T}(d) &= \E\!\left[\varphi_\nu(\mathcal{D}_i, \mathcal{D}_j) \mid \mathcal{D}_i = d,\, A_i = 1,\, A_j = 0\right]-\tau_\nu, \notag\\
+    g_{\nu,C}(d) &= \E\!\left[\varphi_\nu(\mathcal{D}_i, \mathcal{D}_j) \mid \mathcal{D}_j = d,\, A_i = 1,\, A_j = 0\right]-\tau_\nu.
+    \label{eq:g_functions}
+\end{align}
+By construction they are mean zero,
+$\E[g_{\nu,T}(\mathcal{D}_i)\mid A_i=1]=\E[g_{\nu,C}(\mathcal{D}_j)\mid A_j=0]=0$. Following \citet[][\S12.2]{vandervaart_asymptotic_1998}, the projection of
+$\bar{\tau}_\nu-\tau_\nu$ onto the space of functions of the form
+$\sum_i k(\mathcal{D}_i)+\sum_j l(\mathcal{D}_j)$ is
+\begin{equation}\label{eq:HajekU}
+    \Pi_\nu = \frac1{n_1}\sum_{i:\,A_i=1} g_{\nu,T}(\mathcal{D}_i)
+             +\frac1{n_0}\sum_{j:\,A_j=0} g_{\nu,C}(\mathcal{D}_j).
+\end{equation}
+Intuitively, $g_{\nu,T}(d)$ is the centered expected win/loss contribution of a treated
+subject with observed HE $d$ compared against a random control, and $g_{\nu,C}(d)$ that of
+a control subject with HE $d$ against a random treated subject; the projection $\Pi_\nu$
+thus aggregates these one-way contributions across the two arms. The following lemma shows
+that $\Pi_\nu$ is asymptotically normal by the central limit theorem and that its
+difference from $\bar{\tau}_\nu-\tau_\nu$ is asymptotically negligible.
+
+\begin{lemma}[Hoeffding--H\'ajek projection]
+\label{lem:hajek}
+For $\nu \in \{w, l\}$, define the degenerate residual kernel
+\[
+r_\nu(d,d')=\varphi_\nu(d,d')-\tau_\nu-g_{\nu,T}(d)-g_{\nu,C}(d').
+\]
+Then the exact decomposition
+\begin{equation}
+   \bar{\tau}_\nu-\tau_\nu= \Pi_\nu + R_{\nu,N}
+\label{eq:hajek}
+\end{equation}
+holds, where
+\[
+R_{\nu,N}=\frac{1}{n_1 n_0}\sum_{i:\,A_i=1}\sum_{j:\,A_j=0}r_\nu(\mathcal{D}_i,\mathcal{D}_j).
+\]
+Because the win/loss kernel is bounded, $\E[\varphi_\nu(\mathcal{D}_i,\mathcal{D}_j)^2]<\infty$
+holds automatically; under $n_1/N\to e\in(0,1)$ the remainder satisfies
+$R_{\nu,N}=\Op(N^{-1})$, and hence $\sqrt{N}\,R_{\nu,N}=\op(1)$.
+\end{lemma}
+The proof is given in Appendix~\ref{App:Lemma1}.
+
+\paragraph{Influence function for win/loss probability}
+\begin{corollary}[Influence function for $\bar{\tau}_\nu$]\label{cor:if}
+For \(\nu\in\{w,l\}\), under $n_1/N\to e\in(0,1)$ , we have 
+\[
+\sqrt{N} \left(\bar\tau_\nu-\tau_\nu\right)
+=
+\frac{1}{\sqrt{N}}\sum_{i=1}^N\psi_\nu(O_i)+o_p(1),
+\]
+where
+\begin{equation}\label{eq:IF_barU}
+   \psi_\nu(O) = \frac{A}{e}g_{\nu,T}(\mathcal D) + \frac{1-A}{1-e}g_{\nu,C}(\mathcal D). 
+\end{equation}
+The influence function satisfies \(E\{\psi_\nu(O)\}=0\) and has finite variance.
+\end{corollary}
+The proof is given in Appendix~\ref{App:Cor1}.
+
+% \paragraph{Influence function for NB.}
+% The estimand of net benefit is $\Delta=\tau_w-\tau_l$, with unadjusted estimator $\bar\Delta=\bar\tau_w-\bar\tau_l$.
+% By the linearity of asymptotic representation in Corollary~\ref{cor:if}, we have
+% \[ \sqrt N(\bar\Delta-\Delta) = \frac1{\sqrt N} \sum_{i=1}^N \psi_\Delta(O_i) + o_p(1), \] 
+% where 
+% \begin{equation}\label{eq:IF_NB}
+%  \psi_\Delta(O)=\psi_w(O)-\psi_l(O).    
+% \end{equation}
+
+% \paragraph{Influence function for log WR.}
+% The estimand of log Win Ratio is $\theta = \log{\tau_w} - \log{\tau_l}$, with unadjusted estimator $\bar{\theta} = \log{\bar{\tau}_w} - \log{\bar{\tau}_l}$. 
+% Applying the delta method to $\bar\theta$ and invoking Corollary~\ref{cor:if}, we obtain 
+% \[
+% \sqrt N(\bar\theta-\theta) = \frac1{\sqrt N} \sum_{i=1}^N \psi_\theta(O_i) + o_p(1), 
+% \] 
+% where 
+% \begin{equation}
+% \psi_\theta(O) = 
+% \frac{\psi_w(O)}{\tau_w}
+% -
+% \frac{\psi_l(O)}{\tau_l}.
+% \label{eq:if_theta}
+% \end{equation}
+% A detailed proof of is given in Appendix~\ref{app:if-logwr}.
+
+% \paragraph{Influence function for log WO.} 
+% Denote $\gamma$ as the estimand of log Win Odds, where $\gamma = \log{(\tau_w+\tfrac12\tau_\Omega)}-\log{(\tau_l+\tfrac12\tau_\Omega)}.$ Splitting ties evenly and using $\tau_\Omega=1-\tau_w-\tau_l$,  we can write the win odds
+% \citep{dong_win_2023, scheidegger2026covariate} as a monotone transformation of the net benefit $\Delta$. Thus, we have 
+% $\gamma
+% =\log{(1+\Delta)}-\log{(1-\Delta)},$
+% with unadjusted estimator
+% $ \bar\gamma=\log{(1+\bar\Delta)}-\log{(1-\bar\Delta)}.$
+% Similarly, we have 
+% \[
+% \sqrt N(\bar\gamma-\gamma) = \frac1{\sqrt N} \sum_{i=1}^N \psi_{\gamma}(O_i) + o_p(1), 
+% \] 
+% where 
+% \begin{equation}
+% \psi_{\gamma}(O) = \frac{2}{1-\Delta^2}\left[\psi_w(O) - \psi_l(O)\right]
+% \label{eq:if_logWO}
+% \end{equation}
+% A detailed proof of is given in Appendix~\ref{app:if-logwo}.
+
+% \paragraph{IF Summary Table}
+
+% \begin{table}[h]
+% \centering
+% \small
+% \caption{Estimands, point estimators, and influence functions for all win measures.}
+% \label{tab:if_summary}
+% \renewcommand{\arraystretch}{2.0}
+% \begin{tabular}{lll}
+% \toprule
+% \textbf{Estimand} & \textbf{Unadjusted estimator} & \textbf{Influence function}\\
+% \midrule
+% log WR $\theta = \log\tau_w-\log\tau_l$
+%   & $\bar{\theta}= \log\bar\tau_w-\log\bar\tau_l$
+%   & $\dfrac{\psi_w}{\tau_w}-\dfrac{\psi_l}{\tau_l}$ \\
+% NB $\Delta=\tau_w-\tau_l$
+%   & $\bar\Delta=\bar\tau_w-\bar\tau_l$
+%   & $\psi_w-\psi_l$ \\
+% log WO $\gamma = \log{(1+\Delta)}-\log{(1-\Delta)}$
+%   & $\bar\gamma=\log{(1+\bar\Delta)}-\log{1-\bar\Delta)}$
+%   & $\dfrac{2}{1-\Delta^2}\big(\psi_w-\psi_l\big)$ \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+
+\paragraph{A unified estimand and its influence function.}
+The marginal win measures considered in this paper are smooth transformations of the
+win and loss probabilities. Let
+\[
+\boldsymbol\tau=(\tau_w,\tau_l)^\top,
+\qquad
+\bar{\boldsymbol\tau}=(\bar\tau_w,\bar\tau_l)^\top,
+\qquad
+\boldsymbol\psi(O)=(\psi_w(O),\psi_l(O))^\top.
+\]
+For a measure \(m\in\mathcal M=\{\mathrm{NB},\mathrm{LWR},\mathrm{LWO}\}\), where NB denotes the Net Benefit, LWR the log Win Ratio, and LWO the log Win Odds \citep{dong_win_2023, zhang2026forss}, define its population estimand 
+\[
+\eta_m=h_m(\boldsymbol\tau),
+\]
+and its unadjusted estimator
+\[
+\bar\eta_m=h_m(\bar{\boldsymbol\tau}).
+\]
+Here \(\bar{\boldsymbol\tau}\) consists of the unadjusted two-sample U-statistic estimators
+of \((\tau_w,\tau_l)\). Thus \(\bar\eta_m\) is the unadjusted estimator of the
+corresponding marginal win measure $m$ before covariate adjustment. 
+
+Let
+$
+\Delta=\tau_w-\tau_l.
+$ The
+corresponding transformations are
+\[
+h_{\mathrm{NB}}(\tau_w,\tau_l)=\Delta,
+\quad
+h_{\mathrm{LWR}}(\tau_w,\tau_l)=\log\tau_w-\log\tau_l,
+\]
+and
+\[
+h_{\mathrm{LWO}}(\tau_w,\tau_l)
+=
+\log(1+\Delta)
+-
+\log(1-\Delta).
+\]
+
+We assume that \(h_m\) is continuously differentiable at the truth; in particular,
+\(\tau_w,\tau_l>0\) for LWR and \(|\Delta|<1\) for LWO.
+
+By Corollary~\ref{cor:if},
+\[
+ \sqrt N(\bar{\boldsymbol\tau}-\boldsymbol\tau)
+=
+\frac1{\sqrt N}\sum_{i=1}^N\boldsymbol\psi(O_i)+o_p(1).
+\]
+Applying the multivariate delta method gives
+\begin{equation}
+    \sqrt N(\bar\eta_m-\eta_m)
+=
+\frac1{\sqrt N}\sum_{i=1}^N\psi_{\eta_m}(O_i)+o_p(1),
+\end{equation}
+where
+\begin{equation}
+\psi_{\eta_m}(O)
+=
+\nabla h_m(\boldsymbol\tau)^\top\boldsymbol\psi(O)
+=
+\partial_w h_m(\boldsymbol\tau)\psi_w(O)
++
+\partial_l h_m(\boldsymbol\tau)\psi_l(O).
+\end{equation}
+Thus each win measure has an influence function given by a population-gradient-weighted linear combination of the elementary influence functions \(\psi_w\) and \(\psi_l\), as summarized in Table~\ref{tab:if_summary}. Detailed derivation process is in Appendix~\ref{app:if-winmeasure}.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Estimands $\eta_m$, unadjusted estimators $\bar\eta_m$, gradients $\nabla h_m(\boldsymbol\tau)$, and influence functions  $\psi_{\eta_m}$ for all win
+measures. In every case $\psi_{\eta_m}=\partial_w h_m\,\psi_w+\partial_l h_m\,\psi_l$.}
+\label{tab:if_summary}
+\renewcommand{\arraystretch}{2.2}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Measure} & \textbf{Estimand $\eta_m$} & \textbf{Estimator $\bar\eta_m$}
+  & \textbf{Gradient $\nabla h_m(\boldsymbol\tau)^\top$} & \textbf{Influence function $\psi_{\eta_m}$}\\
+\midrule
+NB
+  & $\Delta = \tau_w-\tau_l$
+  & $\bar\Delta=\bar\tau_w-\bar\tau_l$
+  & $(1,\,-1)$
+  & $\psi_w-\psi_l$ \\
+log WR
+  & $\log\tau_w-\log\tau_l$
+  & $\log\bar\tau_w-\log\bar\tau_l$
+  & $\bigl(\tfrac{1}{\tau_w},\,-\tfrac{1}{\tau_l}\bigr)$
+  & $\dfrac{\psi_w}{\tau_w}-\dfrac{\psi_l}{\tau_l}$ \\
+log WO
+  & $\log\dfrac{1+\Delta}{1-\Delta}$
+  & $\log\dfrac{1+\bar\Delta}{1-\bar\Delta}$
+  & $\bigl(\tfrac{2}{1-\Delta^2},\,-\tfrac{2}{1-\Delta^2}\bigr)$
+  & $\dfrac{2}{1-\Delta^2}\bigl(\psi_w-\psi_l\bigr)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Covariate Adjusted Estimator and its Theoretical Property}\label{sec:Adjusted}
+
+The unadjusted estimators of Section~\ref{sec:unadjusted} ignore the baseline covariates $\mathbf{X}$.
+Under randomization, covariate information can be exploited to improve precision without
+altering the target estimand. Because every win measure is a smooth transformation
+$\eta_m=h_m(\boldsymbol\tau)$ of the common win/loss vector
+$\boldsymbol\tau=(\tau_w,\tau_l)^\top$, it suffices to adjust $\boldsymbol\tau$ once: any
+covariate-adjusted estimator of $\boldsymbol\tau$ induces a covariate-adjusted estimator of
+every $\eta_m$ through the same map $h_m$.
+
+\subsection{The model-assisted adjusted estimator}
+
+Throughout, treatment is randomized with known probability $e=\Pr(A=1)$, so that
+$A\perp\!\!\!\perp \mathbf{X}$. For a square-integrable vector augmentation function
+$\boldsymbol b=(b_w,b_l)^\top:\mathcal X\to\mathbb R^2$, define the adjusted win-loss vector
+\begin{equation}\label{eq:adj_tau}
+   \hat{\boldsymbol\tau}(\boldsymbol b)
+   =\bar{\boldsymbol\tau}-\frac1N\sum_{i=1}^N (A_i-e)\,\boldsymbol b(\mathbf{X}_i),
+\end{equation}
+and the corresponding model-assisted adjusted estimator of $\eta_m$,
+\begin{equation}\label{eq:adj_estimator}
+   \hat\eta_m(\boldsymbol b)=h_m\bigl(\hat{\boldsymbol\tau}(\boldsymbol b)\bigr).
+\end{equation}
+In practice $\boldsymbol b$ is replaced by an estimate $\hat{\boldsymbol b}$ fitted from a working model (e.g., working regressions for the conditional win/loss functions); we let
+$\hat{\boldsymbol b} \to_p \boldsymbol b^\ast$, which need not coincide with any
+true conditional expectation. Taking $\boldsymbol b\equiv\boldsymbol 0$ recovers the
+unadjusted estimator $\bar\eta_m$.
+
+\paragraph{Estimand invariance and model-robustness.}
+By randomization, $A\perp\!\!\!\perp \mathbf{X}$, hence for any fixed square-integrable
+$\boldsymbol b$,
+\[
+   \E[(A-e)\,\boldsymbol b(\mathbf{X})]=\E[A-e]\,\E[\boldsymbol b(\mathbf{X})]=\boldsymbol 0 .
+\]
+The augmentation term $N^{-1}\sum_{i=1}^N(A_i-e)b(\mathbf{X}_i)$ in \eqref{eq:adj_tau} thus has mean zero, so
+$\hat{\boldsymbol\tau}(\boldsymbol b)\to_p\boldsymbol\tau$ and, by continuity of $h_m$,
+$\hat\eta_m(\boldsymbol b)\to_p\eta_m$ in \eqref{eq:adj_estimator}; the same holds for $\hat\eta_m(\hat{\boldsymbol b})$
+under $\hat{\boldsymbol b}\to_p\boldsymbol b^\ast$ for \emph{any} limit $\boldsymbol b^\ast$.
+The model-assisted adjusted estimator therefore targets the same estimand as the unadjusted estimator,
+and a mis-specified working model affects only efficiency, never consistency---the
+model-robustness property of covariate adjustment in randomized trials \citep{tsiatis2008covariate, zhang2025unified}.
+
+\paragraph{Adjusted Influence function of Win Measure $m$.}
+\begin{proposition}[Asymptotic linearity of the adjusted estimator]
+\label{prop:adj_if}
+Under randomization with known $e$ and standard regularity conditions on
+$\hat{\boldsymbol b}$, for $m\in \mathcal{M}$ we have 
+\[
+   \sqrt N\bigl(\hat\eta_m(\hat{\boldsymbol b})-\eta_m\bigr)
+   =\frac1{\sqrt N}\sum_{i=1}^N\psi^{\mathrm{adj}}_{\eta_m}(O_i)+o_p(1),
+\]
+where
+\[
+   \psi^{\mathrm{adj}}_{\eta_m}(O)
+   =\nabla h_m(\boldsymbol\tau)^\top\bigl[\boldsymbol\psi(O)-(A-e)\,\boldsymbol b^\ast(\mathbf{X})\bigr]
+   =\psi_{\eta_m}(O)-(A-e)\,\nabla h_m(\boldsymbol\tau)^\top\boldsymbol b^\ast(\mathbf{X}).
+\]
+Furthermore, estimation of $\boldsymbol b$ does not contribute to
+$\psi^{\mathrm{adj}}_{\eta_m}$: writing $\hat{\boldsymbol b}=\boldsymbol b_{\hat\gamma}$ for
+a working-model parameter $\gamma$, randomization gives
+$\partial_\gamma\,\E[(A-e)\,\boldsymbol b_\gamma(\mathbf{X})]
+=\E[A-e]\,\E[\partial_\gamma\boldsymbol b_\gamma(\mathbf{X})]=\boldsymbol 0$,
+so first-order variation in $\hat{\boldsymbol b}$ is asymptotically negligible.
+\end{proposition}
+The proof combines the mean-zero expansion of \eqref{eq:adj_tau} with the multivariate
+delta method, and is given in Appendix~\ref{app:adj_if} \textbf{[BZ: Will add Appendix later]}.
+
+\subsection{Optimal augmentation function}
+
+The adjusted estimator has asymptotic variance
+\begin{equation}\label{eq:Varb}
+    \sigma_m^2(\boldsymbol b^\ast)
+    =\Var\{\psi_{\eta_m}(O)-(A-e)\,\nabla h_m(\boldsymbol\tau)^\top\boldsymbol b^\ast(\mathbf X)\} = \E[\{\psi_{\eta_m}(O)-(A-e)\,\nabla h_m(\boldsymbol\tau)^\top\boldsymbol b^\ast(\mathbf X)\}]^2.
+\end{equation}
+
+
+Under randomization, for any mean-zero square-integrable $\psi$, the augmentation
+minimizing $\Var\{\psi(O)-(A-e)b(\mathbf X)\}$ over square-integrable $b$ is the
+conditional contrast \citep{tsiatis2008covariate, zhang2008improving, zhang2025unified}
+\[
+   b^{\mathrm{opt}}(\mathbf X)
+   =\E\{\psi(O)\mid A=1,\mathbf X\}-\E\{\psi(O)\mid A=0,\mathbf X\}.
+\]
+Applying this to $\psi=\psi_{\eta_m}$ and using that $\nabla h_m(\boldsymbol\tau)$ is a
+constant vector at the truth gives
+$b_m^{\mathrm{opt}}=\nabla h_m^\top\boldsymbol b^{\mathrm{opt}}$. 
+
+Because $\nabla h_m(\boldsymbol\tau)$ is a constant vector at the truth, it factors out of
+the conditional expectations, so the per-measure optimum decomposes through the two
+elementary augmentations
+$\boldsymbol b^{\mathrm{opt}}=(b_w^{\mathrm{opt}},b_l^{\mathrm{opt}})^\top$ with
+$b_\nu^{\mathrm{opt}}(\mathbf X)=\E\{\psi_\nu(O)\mid A=1,\mathbf X\}-\E\{\psi_\nu(O)\mid A=0,\mathbf X\}$:
+\begin{equation}\label{eq:b_opt_measure}
+   b_m^{\mathrm{opt}}(\mathbf X)=\nabla h_m(\boldsymbol\tau)^\top\boldsymbol b^{\mathrm{opt}}(\mathbf X).
+\end{equation}
+
+\begin{remark}[A single fit serves all win measures]
+\label{rmk:shared_fit}
+The decomposition \eqref{eq:b_opt_measure} shows that the optimal augmentation for every
+win measure $m\in\mathcal{M}$ is a fixed linear combination of the same two elementary augmentations
+$b_w^{\mathrm{opt}}$ and $b_l^{\mathrm{opt}}$, with measure-specific weights given by the
+population gradient $\nabla h_m(\boldsymbol\tau)$ (the gradient column of
+Table~\ref{tab:if_summary}). Consequently, only a single pair of working models---for the conditional win and loss functions $\psi_w$ and $\psi_l$---needs to be fitted; the optimal adjustment for NB, LWR, and LWO is then obtained by reweighting this common fit through $\nabla h_m$, rather than estimating a separate working model for each measure $m$.
+\end{remark}
+
+\paragraph{Variance decomposition at the optimum.}
+Because $b_m^{\mathrm{opt}}$ is the projection of $\psi_{\eta_m}$ onto the augmentation
+space $\{(A-e)b(\mathbf X)\}$, the residual $\psi_{\eta_m}-(A-e)b_m^{\mathrm{opt}}$ is
+orthogonal to $(A-e)b_m^{\mathrm{opt}}$, i.e.\
+$\Cov\{\psi_{\eta_m}-(A-e)b_m^{\mathrm{opt}},\,(A-e)b_m^{\mathrm{opt}}\}=0$. Hence the
+Pythagorean decomposition
+\[
+   \Var\{\psi_{\eta_m}(O)\}
+   =\Var\{\psi_{\eta_m}(O)-(A-e)b_m^{\mathrm{opt}}(\mathbf X)\}
+   +\Var\{(A-e)b_m^{\mathrm{opt}}(\mathbf X)\}
+\]
+holds, so the precision gained by the optimally adjusted estimator is exactly
+\[
+   \Var\{\psi_{\eta_m}(O)\}-\sigma_m^2(b_m^{\mathrm{opt}})
+   =\Var\{(A-e)b_m^{\mathrm{opt}}(\mathbf X)\}\ge 0,
+\]
+with equality if and only if $b_m^{\mathrm{opt}}(\mathbf X)=0$ almost surely---that is,
+when the conditional win/loss contributions carry no information beyond the marginal, so
+that the covariates are prognostically irrelevant.
+
+\paragraph{Guarantee Efficiency Gain.}
+For a generic limit $\boldsymbol b^\ast$ the adjusted estimator is consistent but its
+variance may exceed $\Var\{\psi_{\eta_m}\}$; a precision gain is \emph{not} guaranteed under
+an arbitrary working model. When $\hat{\boldsymbol b}$ consistently estimates the optimal
+augmentation ($\boldsymbol b^\ast=\boldsymbol b^{\mathrm{opt}}$), the decomposition above
+gives $\sigma_m^2(b_m^{\mathrm{opt}})\le\Var\{\psi_{\eta_m}(O)\}$, the unadjusted variance
+being recovered at $\boldsymbol b\equiv\boldsymbol 0$; the adjusted estimator is then no
+less efficient than $\bar\eta_m$ and attains the semi-parametric efficiency bound within
+this class \citep{tsiatis2008covariate, vermeulen2015increasing}.
+
+\section{Practical estimation algorithm}\label{sec:algorithm}
+
+A single pass furnishes covariate-adjusted estimators of NB, LWR, and LWO
+simultaneously: the win/loss vector $\boldsymbol\tau$ is adjusted once and propagated
+through $h_m$.
+
+\begin{enumerate}[label=Step \arabic*.]
+\item Fix the restriction horizon $S$ and the level-$q$ comparison rules. Form the
+pairwise win/loss kernels $\varphi_w(\mathcal D_i,\mathcal D_j)$,
+$\varphi_l(\mathcal D_i,\mathcal D_j)$ over treatment--control pairs by applying the
+hierarchical rule \eqref{eq:kernel_functions}.
+
+\item Compute the unadjusted win/loss probabilities $\bar\tau_w,\bar\tau_l$ via \eqref{eq:u_statistics} and the
+measure unadjusted estimators $\bar\eta_m=h_m(\bar{\boldsymbol\tau})$ for
+$m\in\mathcal{M}=\{\mathrm{NB},\mathrm{LWR},\mathrm{LWO}\}$.
+
+\item \emph{Estimate the centered one-way placement (win/loss) functions} of
+\eqref{eq:g_functions}. For $\nu\in\{w,l\}$, a treated subject $i$ has
+\[
+   \hat g_{\nu,T}(\mathcal D_i)
+   =\frac1{n_0}\!\!\sum_{k:A_k=0}\!\!\varphi_\nu(\mathcal D_i,\mathcal D_k)-\bar\tau_\nu,
+\]
+and a control subject $i$ has
+\[
+   \hat g_{\nu,C}(\mathcal D_i)
+   =\frac1{n_1}\!\!\sum_{k:A_k=1}\!\!\varphi_\nu(\mathcal D_k,\mathcal D_i)-\bar\tau_\nu.
+\]
+
+
+\item \emph{Construct the unadjusted influence-function estimates.} For
+$\nu\in\{w,l\}$,
+\[
+   \hat\psi_{\nu,i}
+   =\frac{A_i}{\hat e}\,\hat g_{\nu,T}(\mathcal D_i)
+   +\frac{1-A_i}{1-\hat e}\,\hat g_{\nu,C}(\mathcal D_i),
+   \qquad
+   \hat{\boldsymbol\psi}_i=(\hat\psi_{w,i},\hat\psi_{l,i})^\top,
+\]
+matching the influence function $\psi_\nu$ in \eqref{eq:IF_barU}.
+
+\item \emph{Estimate the two elementary augmentations}
+$\hat{\boldsymbol b}=(\hat b_w,\hat b_l)^\top$. For $\nu\in\{w,l\}$:
+\begin{itemize}
+\item \textbf{Direct (recommended).} Restrict $b_\nu$ to the linear class
+$b_{\nu,\beta}(\mathbf X)=\beta_\nu^\top f(\mathbf X)$ for a pre-specified feature map $f$, and solve the weighted least-squares problem $\min_{\beta_\nu}\sum_{i=1}^N[\hat\psi_{\nu,i}-(A_i-\hat e)\beta_\nu^\top f(\mathbf X_i)]^2$,
+setting $\hat b_\nu(\mathbf X)=\hat\beta_\nu^\top f(\mathbf X)$. The simplest choice
+$f(\mathbf X)=(1,\mathbf X^\top)^\top$ gives a linear adjustment in the raw covariates $\mathbf{X}$;
+richer $f$ (splines, interactions) may be used \citep{zhang2025unified}. Because $b\equiv 0$ lies in the class
+(at $\beta_\nu=0$), this minimization guarantees no asymptotic variance inflation within
+the chosen class regardless of whether $b_\nu^{\mathrm{opt}}$ is linear.
+\item \textbf{Indirect (flexible).} Estimate the within-arm conditional means
+$\mu_{\nu,a}(\mathbf X)=\E\{\psi_\nu\mid A=a,\mathbf X\}$, $a\in\{0,1\}$, by regressing
+$\hat\psi_{\nu,i}$ on $\mathbf X_i$ \emph{separately within each arm} to obtain
+$\hat\mu_{\nu,1}(\mathbf X)$ and $\hat\mu_{\nu,0}(\mathbf X)$, and set
+$\hat b_\nu(\mathbf X)=\hat\mu_{\nu,1}(\mathbf X)-\hat\mu_{\nu,0}(\mathbf X)$, the sample
+analogue of the optimal augmentation of $b_\nu^\text{opt}$. Use this when the
+covariate--outcome relationship is strongly nonlinear; with flexible learners, apply
+cross-fitting.
+\end{itemize}
+The same pair $(\hat b_w,\hat b_l)$ serves all win measures $m\in\mathcal{M}$ as is pointed out in Remark \ref{rmk:shared_fit}.
+
+\item \emph{Adjust the win/loss probabilities, then transform to corresponding Win Measure.} For $\nu\in\{w,l\}$ form
+\[ \hat\tau_\nu^{\mathrm{adj}}=\bar\tau_\nu-\frac1N\sum_{i=1}^N(A_i-\hat e)\hat b_\nu(\mathbf{X}_i),
+   \qquad \hat\eta_m^{\mathrm{adj}}=h_m(\hat{\boldsymbol\tau}^{\mathrm{adj}}),
+\]
+
+\item \emph{Variance Estimation.} With the plug-in gradient
+$\hat\nabla h_m=\nabla h_m(\hat{\boldsymbol\tau}^{\mathrm{adj}})$ from
+Table~\ref{tab:if_summary},
+\[
+   \hat\psi^{\mathrm{adj}}_{\eta_m,i}
+   =\hat\nabla h_m^\top\bigl[\hat{\boldsymbol\psi}_i-(A_i-\hat e)\hat{\boldsymbol b}(\mathbf{X}_i)\bigr],
+   \qquad \text{with} \,\,
+   \widehat\Var(\hat\eta_m^{\mathrm{adj}})
+   =\frac1N\,\mathbb P_N\bigl[\{\hat\psi^{\mathrm{adj}}_{\eta_m,i}-\mathbb P_N\hat\psi^{\mathrm{adj}}_{\eta_m}\}^2\bigr].
+\]
+\end{enumerate}
+
+\subsection{Potential Alternative for IF projection}
+We could use the stable balancing weights on subject level IF as an alternative. 
+
+
+\section{Simulation Design}
+\begin{itemize}
+    \item Neuro Outcome study, not event-driven, fixed follow-up time $S$
+    \item RCT design
+    \begin{itemize}
+        \item allocation ratio $e$, $n_0$ and $n_1$
+        \item Number of baseline $\mathbf{X}$, data type of baseline
+        \item  HE: Survival, ALSFRS-S (continuous with tie, lots of tie) and nfl (a biomarker). Death + two continuous
+        \begin{itemize}
+            \item Outcome model assumption
+        \end{itemize}
+    \end{itemize}
+    \item Data Generation Process
+\end{itemize}
+
+\paragraph{Methods comparison}
+\begin{itemize}
+    \item Unadjusted vs Adjusted
+    \item IF projection to a linear space
+    \begin{itemize}
+        \item Model Mis-specified : Consider partial observed $\mathbf{X}$, VS fully observed $\mathbf{X}$, VS including covariates $X^*$ not included in the DGP
+    \end{itemize}
+\end{itemize}
+Methods are compared in terms of , standard deviation, relative efficiency and coverage probability. 
+\begin{itemize}
+    \item bias
+    \item Standard Deviation
+    \item Relative Efficiency: The relative efficiency of an estimator is calculated as the inverse ratio of its variance to the variance of the unadjusted estimator. For example, an augmented estimator with relative efficiency 1.5 allows the sample size to be reduced by one third while maintaining the same level of precision attained by the unadjusted estimator.
+    \item coverage probability
+\end{itemize}
+
+\section{Simulation studies}\label{sec:simulation}
+
+We evaluate the proposed covariate-adjusted estimators $\hat\eta_m^{\mathrm{adj}}$ of NB, LWR, and LWO against a
+range of alternative adjustment schemes, assessing bias, efficiency, confidence-interval
+coverage, type I error, and power. All estimators target the restricted, horizon-$S$
+estimands of Section~\ref{sec:unadjusted} under administrative censoring.
+
+\subsection{Data-generating mechanism}\label{sec:sim_dgm}
+
+We mimic a neurological trial with a three-level hierarchical endpoint, time to death
+$\succ$ ALSFRS-S functional score $\succ$ NfL biomarker, evaluated at a fixed horizon $S$.
+For subject $i$ we generate a baseline covariate vector
+$\mathbf X_i=(X_{i1},X_{i2},X_{i3})^\top$ with $X_{i1},X_{i2}\overset{iid}{\sim}N(0,1)$ and
+$X_{i3}\sim\mathrm{Bernoulli}(0.5)$, and a treatment indicator
+$A_i\sim\mathrm{Bernoulli}(e)$ independent of $\mathbf X_i$. The three components are drawn
+from
+\begin{align*}
+   \text{(death)}\quad
+   & D_i \sim \text{Weibull with hazard } \lambda_D(t)=\lambda_0\exp\{\alpha A_i+\boldsymbol\gamma_D^\top \mathbf X_i\},\\
+   \text{(ALSFRS-S)}\quad
+   & U_i = \mu_0+\beta A_i+\boldsymbol\gamma_F^\top \mathbf X_i+\varepsilon_i^{F},\quad
+     V_i=\operatorname{round}(U_i)\ \text{(integer score, larger is better)},\\
+   \text{(NfL)}\quad
+   & \log B_i = \nu_0+\rho A_i+\boldsymbol\gamma_N^\top \mathbf X_i+\varepsilon_i^{N}\quad
+     \text{(smaller is better)},
+\end{align*}
+with $\varepsilon_i^{F},\varepsilon_i^{N}$ independent Gaussian errors. Rounding the
+functional score to an integer scale induces the heavy ties characteristic of ALSFRS-S,
+exercising the tie handling of NB/WR/WO (in particular the half-win treatment of ties in
+LWO). All subjects are administratively censored at $S$; we set $S$ so that roughly
+$20\%$ of subjects die before $S$, leaving the remainder compared on ALSFRS-S and then NfL.
+
+The hierarchical kernel \eqref{eq:kernel_functions} is applied with the priority
+death $\succ$ ALSFRS-S $\succ$ NfL: a pair is decided on survival to $S$; if tied on
+death, on the functional score (with a tie if $|V_i-V_j|=0$); and if still tied, on NfL.
+
+\paragraph{Scenario factors.}
+We cross the following factors:
+\begin{itemize}
+\item \textbf{Effect (null vs.\ alternative).} For type I error, all treatment effects are
+   set to zero, $(\alpha,\beta,\rho)=(0,0,0)$, so that $A\perp\!\!\!\perp$ outcome and the
+   true values are $\mathrm{NB}=0$, $\mathrm{LWR}=0$, $\mathrm{LWO}=0$. For power, the
+   treatment is beneficial across components, with $(\alpha,\beta,\rho)$ calibrated by
+   Monte Carlo (a pilot run of $10^6$ subjects) to give pre-specified true values.
+\item \textbf{Covariate prognosis.} The covariate--outcome coefficients
+   $(\boldsymbol\gamma_D,\boldsymbol\gamma_F,\boldsymbol\gamma_N)$ are scaled to
+   \emph{weak}, \emph{moderate}, and \emph{strong} prognostic strength, since covariate
+   adjustment is expected to help only insofar as $\mathbf X$ is prognostic.
+\item \textbf{Allocation.} Balanced ($e=1/2$) and unbalanced ($e=2/3$) randomization.
+\item \textbf{Working-model specification.} \emph{Correct}: adjustment features
+   $f(\mathbf X)=(1,\mathbf X^\top)^\top$ match the generating model.
+   \emph{Misspecified}: the generating model includes a nonlinear term
+   ($X_{i1}^2$ and an $X_{i1}X_{i3}$ interaction) that is omitted from $f$, probing
+   model-robustness (consistency should be retained, efficiency may degrade).
+\item \textbf{Sample size.} $N\in\{200, 600,1000\}$.
+\end{itemize}
+Each configuration uses $5000$ Monte Carlo replications. True values of NB, LWR, and LWO
+are obtained by the same large-sample Monte Carlo procedure.
+
+\subsection{Methods compared}\label{sec:sim_methods}
+
+All adjusted estimators target the same horizon-$S$ estimands; they differ only in how
+covariate information is incorporated. The propensity score is estimated by logistic
+regression on $f(\mathbf X)$ where a weight requires it.
+\begin{itemize}
+\item \textbf{UNADJ.} The unadjusted U-statistic estimators $\bar\eta_m$ of
+   Section~\ref{sec:unadjusted}.
+\item \textbf{IPW.} Pairwise stabilized inverse-probability weighting
+   $\omega(\mathbf X_i,\mathbf X_j)=\{\hat e(\mathbf X_i)[1-\hat e(\mathbf X_j)]\}^{-1}$
+   applied to the win/loss kernels with H\'ajek normalization \citep{cao2025covariate}.
+\item \textbf{SBW.} Stable balancing weights \citep{zubizarreta2015stable} applied to the
+   subject-level placement values $\hat\psi_{\nu,i}$: arm-specific weights minimizing the
+   squared distance to uniform subject to equating weighted covariate moments to the
+   pooled mean.
+\item \textbf{EB.} Entropy balancing \citep{hainmueller2012entropy}: the same moment
+   constraints as SBW but minimizing the relative entropy (KL divergence) to uniform
+   weights rather than the squared distance.
+\item \textbf{Proposed--Direct.} The linear IF-projection (model-assisted) estimator of
+   Section~\ref{sec:algorithm}, Step~5 (Direct), with $f(\mathbf X)=(1,\mathbf X^\top)^\top$.
+\item \textbf{Proposed--Flexible.} The Indirect estimator with within-arm random-forest
+   regressions of $\hat\psi_{\nu,i}$ on $\mathbf X_i$ and cross-fitting, able to capture
+   nonlinear covariate--outcome relationships.
+\end{itemize}
+Under a correctly specified linear class, Proposed--Direct, SBW, and EB share the same
+first-order influence function (Section~\ref{sec:three-equiv}); the simulation therefore
+isolates their \emph{finite-sample} behavior, while IPW (a pairwise product-weighting
+scheme) and Proposed--Flexible (nonlinear) are first-order distinct.
+
+\subsection{Performance metrics}\label{sec:sim_metrics}
+
+For each estimand $\eta_m\in\{\mathrm{NB},\mathrm{LWR},\mathrm{LWO}\}$ and each method we
+report, across replications: empirical bias; empirical standard deviation (ESD); the mean
+of the closed-form standard-error estimator of Section~\ref{sec:algorithm}, Step~7 (ASE);
+the empirical coverage probability of the nominal $95\%$ Wald interval (CP, built on the
+log scale for WR/WO and exponentiated); and the proportion of variance reduction relative
+to UNADJ, $\mathrm{PVR}=1-\mathrm{ESD}^2_{\text{method}}/\mathrm{ESD}^2_{\text{UNADJ}}$.
+Under the null we report the empirical \textbf{type I error} as the rejection rate of
+$H_0\!:\eta_m=\eta_m^0$ at level $\alpha=0.05$; under the alternative we report
+\textbf{power} as the rejection rate of the same test. Because covariate adjustment can
+inflate type I error in small samples with many adjustment variables
+\citep{scheidegger2026covariate}, we examine the null behavior across all sample sizes and
+both allocation ratios.
+
+\subsection{Expected findings}\label{sec:sim_expected}
+
+The design is constructed to probe four claims. (i) \emph{Estimand invariance /
+model-robustness}: all adjusted estimators should be (approximately) unbiased for NB, LWR,
+and LWO under both correct and misspecified working models, since the augmentation term is
+mean-zero under randomization. (ii) \emph{No-loss efficiency}: Proposed--Direct, SBW, and
+EB should have $\mathrm{PVR}\ge 0$ in every configuration, with PVR increasing in covariate
+prognosis; UNADJ is recovered when $\mathbf X$ is non-prognostic. (iii) \emph{Finite-sample
+ordering}: under unbalanced allocation and small $N$, the moment-balancing schemes
+(SBW, EB) and the overlap-type behavior are expected to be at least as stable as IPW,
+which can lose efficiency when propensity weights are extreme. (iv) \emph{Flexibility
+gain}: under the misspecified (nonlinear) generating model, Proposed--Flexible is expected
+to recover efficiency that the linear schemes leave on the table, while all methods remain
+consistent. Coverage should be close to nominal for all methods at $N\ge 500$, with type I
+error controlled at $\alpha$ except possibly a mild inflation for the richest adjustment at
+$N=200$.
+
+
+\section{Real Data Analysis}
+
+\section{Discussion}
+\paragraph{Summary}
+
+\paragraph{Contribution}
+\begin{itemize}
+    \item 
+\end{itemize}
+
+\paragraph{Limitation and outlooking}
+\begin{itemize}
+    \item Only consider Administrative censoring; No drop-out in this project
+\end{itemize}
+
+
+\newpage
+\bibliographystyle{plainnat}
+\bibliography{ref}
+
+\newpage 
+
+\section{Appendix}
+\subsection{Proof of Lemma~\ref{lem:hajek}} \label{App:Lemma1}
+\begin{proof}
+We prove the result for $\nu\in\{w,l\}$; the two cases are identical, and we suppress $\nu$ where no confusion arises. By the definition of the degenerate residual kernel
+$r_\nu$,
+\[
+\varphi_\nu(d_i,d_j)-\tau_\nu =
+g_{\nu,T}(d_i)+g_{\nu,C}(d_j)+r_\nu(d_i,d_j).
+\]
+Substituting this identity into the double average for $\bar\tau_\nu-\tau_\nu$ in
+\eqref{eq:u_statistics} gives
+\begin{align*}
+\bar\tau_\nu-\tau_\nu
+=&\frac{1}{n_1 n_0}\sum_{i:\,A_i=1}\sum_{j:\,A_j=0}g_{\nu,T}(\mathcal{D}_i) +\frac{1}{n_1 n_0}\sum_{i:\,A_i=1}\sum_{j:\,A_j=0}g_{\nu,C}(\mathcal{D}_j)\\
+&+\frac{1}{n_1 n_0}\sum_{i:\,A_i=1}\sum_{j:\,A_j=0}r_\nu(\mathcal{D}_i,\mathcal{D}_j).
+\end{align*}
+In the first term the inner sum over the $n_0$ control subjects contributes a factor $n_0$, reducing it to $n_1^{-1}\sum_{i:A_i=1}g_{\nu,T}(\mathcal{D}_i)$; symmetrically, the second term reduces to $n_0^{-1}\sum_{j:A_j=0}g_{\nu,C}(\mathcal{D}_j)$. This proves the exact
+decomposition \eqref{eq:hajek}, which is the two-sample Hoeffding decomposition
+\citep{hoeffding_class_1948, lehmann_elements_1951}, with leading terms equal to the
+H\'ajek projection of $\bar\tau_\nu$
+\citep[][Thm.~12.6]{vandervaart_asymptotic_1998}. 
+
+The residual kernel $r_\nu$ is degenerate, where it has zero conditional mean in each argument. Using
+$\E[\varphi_\nu(d,\mathcal{D}_j)\mid A_j=0]=g_{\nu,T}(d)+\tau_\nu$ (from the definition of
+$g_{\nu,T}$) and the centering $\E[g_{\nu,C}(\mathcal{D}_j)\mid A_j=0]=0$, for fixed $d$,
+\[
+\E[r_\nu(d,\mathcal{D}_j)\mid A_j=0]
+=\big(g_{\nu,T}(d)+\tau_\nu\big)-\tau_\nu-g_{\nu,T}(d)
+ -\E[g_{\nu,C}(\mathcal{D}_j)\mid A_j=0]=0,
+\]
+and symmetrically $\E[r_\nu(\mathcal{D}_i,d)\mid A_i=1]=0$.
+
+Let $\sigma_{r,\nu}^2=\E\{r_\nu(\mathcal{D}_i,\mathcal{D}_j)^2\mid A_i=1,A_j=0\}<\infty$,
+which holds because the kernel is bounded, $0\le\varphi_\nu\le 1$, so that $r_\nu$ and the
+projections in \eqref{eq:g_functions} are bounded. Expanding the variance,
+\[
+\Var(R_{\nu,N})=\frac{1}{n_1^2 n_0^2}
+\sum_{i,k:\,A_i=A_k=1}\ \sum_{j,l:\,A_j=A_l=0}
+\E\{r_\nu(\mathcal{D}_i,\mathcal{D}_j)\,r_\nu(\mathcal{D}_k,\mathcal{D}_l)\}.
+\]
+\begin{itemize}
+    \item If $i\ne k$ and $j\ne l$, the four endpoints are independent and the two factors $\E\{r_\nu(\mathcal{D}_i,\mathcal{D}_j)\}$ and $\E\{r_\nu(\mathcal{D}_k,\mathcal{D}_l)\}$ have mean zero, so the expectation vanishes.
+    \item If $i=k$ but $j\ne l$, condition on the shared $\mathcal{D}_i$ and apply degeneracy in the second argument; the cross expectation vanishes.
+    \item  If $i\ne k$ but $j=l$, condition on the shared $\mathcal{D}_j$ and apply degeneracy in the first argument; it again vanishes.
+\end{itemize}
+  Hence only the $n_1 n_0$ terms with
+$i=k$ and $j=l$ survive, giving
+\[
+\Var(R_{\nu,N})
+=\frac{n_1 n_0}{n_1^2 n_0^2}\,\sigma_{r,\nu}^2
+=\frac{\sigma_{r,\nu}^2}{n_1 n_0}.
+\]
+Since $n_1 n_0\asymp N^2$ under the stated rates, $R_{\nu,N}=\Op(N^{-1})$, and therefore
+$\sqrt{N}\,R_{\nu,N}=\op(1)$.
+\end{proof}
+
+\subsection{Proof of Corollary~\ref{cor:if}}\label{App:Cor1}
+\begin{proof}
+Let $e_N=n_1/N$. The projection \eqref{eq:HajekU} can be written as a single average over
+all subjects,
+\[
+\Pi_\nu
+=\frac1N\sum_{i=1}^N
+\left\{
+\frac{A_i}{e_N}\,g_{\nu,T}(\mathcal{D}_i)
++\frac{1-A_i}{1-e_N}\,g_{\nu,C}(\mathcal{D}_i)
+\right\}.
+\]
+Subtracting the target i.i.d.\ sum, in which $e_N$ is replaced by its limit $e$, gives
+\[
+\Pi_\nu-\frac1N\sum_{i=1}^N\psi_\nu(O_i)
+=\Big(\tfrac1{e_N}-\tfrac1e\Big)\frac1N\sum_{i=1}^N A_i\,g_{\nu,T}(\mathcal{D}_i)
++\Big(\tfrac1{1-e_N}-\tfrac1{1-e}\Big)\frac1N\sum_{i=1}^N (1-A_i)\,g_{\nu,C}(\mathcal{D}_i).
+\]
+Since $e_N\xrightarrow{p}e\in(0,1)$, both prefactors $\Big(\tfrac1{e_N}-\tfrac1e\Big)$ and $\Big(\tfrac1{1-e_N}-\tfrac1{1-e}\Big)$ are $o_p(1)$ by continuous mapping theorem. 
+
+Moreover, \(g_{\nu,T}\) is bounded because \(0\le \varphi_\nu\le 1\), and hence
+\(A g_{\nu,T}(\mathcal D)\) has finite variance. Therefore,
+\[
+\Var\left\{
+\frac1N\sum_{i=1}^N A_i g_{\nu,T}(\mathcal D_i)
+\right\}
+=
+\frac{1}{N}\Var\{A g_{\nu,T}(\mathcal D)\}
+=O(N^{-1}).
+\]
+By Chebyshev inequality, 
+\[
+\frac1N\sum_{i=1}^N A_i g_{\nu,T}(\mathcal D_i)
+=O_p(N^{-1/2}).
+\]
+The same argument gives for the control arm 
+\[
+\frac1N\sum_{i=1}^N (1-A_i)g_{\nu,C}(\mathcal D_i)
+=O_p(N^{-1/2}).
+\]
+Consequently,
+\[
+\Pi_\nu-\frac1N\sum_{i=1}^N\psi_\nu(O_i)
+=
+o_p(1)O_p(N^{-1/2})+o_p(1)O_p(N^{-1/2})
+=
+o_p(N^{-1/2}).
+\]
+
+Combining this with the exact decomposition $\bar\tau_\nu-\tau_\nu=\Pi_\nu+R_{\nu,N}$ from
+Lemma~\ref{lem:hajek} and $R_{\nu,N}=\Op(N^{-1})=o_p(N^{-1/2})$ yields
+$\bar\tau_\nu-\tau_\nu=N^{-1}\sum_{i=1}^N\psi_\nu(O_i)+o_p(N^{-1/2})$. Multiplying by
+$\sqrt N$ gives the stated asymptotically linear representation.
+\end{proof}
+
+\subsection{Delta-method influence functions for smooth win measures}
+\label{app:if-winmeasure}
+
+Let
+\[
+\boldsymbol\tau=
+\begin{pmatrix}
+\tau_w\\
+\tau_l
+\end{pmatrix},
+\qquad
+\bar{\boldsymbol\tau}=
+\begin{pmatrix}
+\bar\tau_w\\
+\bar\tau_l
+\end{pmatrix},
+\qquad
+\boldsymbol\psi(O)=
+\begin{pmatrix}
+\psi_w(O)\\
+\psi_l(O)
+\end{pmatrix}.
+\]
+By Corollary~\ref{cor:if},
+\[
+\bar{\boldsymbol\tau}-\boldsymbol\tau
+=
+\frac1N
+\sum_{i=1}^N
+\boldsymbol\psi(O_i)
++
+o_p(N^{-1/2}).
+\]
+
+Let \(\eta=h(\boldsymbol\tau)\) be any scalar win measure for which
+\(h:\mathbb R^2\to\mathbb R\) is continuously differentiable in a neighborhood of
+\(\boldsymbol\tau\), and let
+\[
+\bar\eta=h(\bar{\boldsymbol\tau})
+\]
+denote its unadjusted plug-in estimator. A first-order Taylor expansion gives
+\[
+\bar\eta-\eta
+=
+\nabla h(\boldsymbol\tau)^\top
+(\bar{\boldsymbol\tau}-\boldsymbol\tau)
++
+o_p\left(\|\bar{\boldsymbol\tau}-\boldsymbol\tau\|\right).
+\]
+Since
+\[
+\bar{\boldsymbol\tau}-\boldsymbol\tau=O_p(N^{-1/2}),
+\]
+the Taylor remainder is \(o_p(N^{-1/2})\). Therefore,
+\[
+\bar\eta-\eta
+=
+\nabla h(\boldsymbol\tau)^\top
+\left\{
+\frac1N
+\sum_{i=1}^N
+\boldsymbol\psi(O_i)
+\right\}
++
+o_p(N^{-1/2}),
+\]
+or equivalently,
+\[
+\bar\eta-\eta
+=
+\frac1N
+\sum_{i=1}^N
+\psi_\eta(O_i)
++
+o_p(N^{-1/2}),
+\]
+where
+\[
+\boxed{
+\psi_\eta(O)
+=
+\nabla h(\boldsymbol\tau)^\top\boldsymbol\psi(O).
+}
+\]
+
+We now record the resulting influence functions for the three win measures considered in
+the main text.
+
+First, for the net benefit (NB), we have
+\[
+h_{\mathrm{NB}}(\tau_w,\tau_l)=\tau_w-\tau_l,
+\qquad
+\nabla h_{\mathrm{NB}}(\boldsymbol\tau)=
+\begin{pmatrix}
+1\\
+-1
+\end{pmatrix}.
+\]
+Thus
+\[
+\boxed{
+\psi_\mathrm{NB}(O)=\psi_w(O)-\psi_l(O).
+}
+\]
+
+Second, for the log win ratio (LWR)
+\[
+\eta_{\mathrm{LWR}}=\log\tau_w-\log\tau_l,
+\qquad
+\bar\eta_{\mathrm{LWR}}=\log\bar\tau_w-\log\bar\tau_l,
+\]
+assume \(\tau_w>0\) and \(\tau_l>0\). Here
+\[
+h_{\mathrm{LWR}}(\tau_w,\tau_l)=\log\tau_w-\log\tau_l,
+\qquad
+\nabla h_{\mathrm{LWR}}(\boldsymbol\tau)=
+\begin{pmatrix}
+1/\tau_w\\
+-1/\tau_l
+\end{pmatrix}.
+\]
+Therefore,
+\[
+\psi_\mathrm{LWR}(O)
+=
+\frac{\psi_w(O)}{\tau_w}
+-
+\frac{\psi_l(O)}{\tau_l}.
+\]
+
+Third, for the log win odds (LWO), recall that
+$
+\tau_\Omega=1-\tau_w-\tau_l
+$
+and
+$
+WO
+=
+\frac{\tau_w+\frac12\tau_\Omega}
+{\tau_l+\frac12\tau_\Omega}.
+$
+Let
+$\Delta=\tau_w-\tau_l.
+$
+Thus the log win odds is
+\[
+\eta_{\mathrm{LWO}}
+=
+\log(1+\Delta)-\log(1-\Delta),
+\]
+with unadjusted estimator
+\[
+\bar\eta_{\mathrm{LWO}}
+=
+\log(1+\bar\Delta)-\log(1-\bar\Delta).
+\]
+Assume \(|\Delta|<1\). Define
+\[
+h_{\mathrm{LWO}}(\tau_w,\tau_l)
+=
+\log(1+\tau_w-\tau_l)
+-
+\log(1-\tau_w+\tau_l).
+\]
+Then
+\[
+\nabla h_{\mathrm{LWO}}(\boldsymbol\tau)
+=
+\begin{pmatrix}
+\displaystyle \frac{2}{1-\Delta^2}\\[6pt]
+\displaystyle -\frac{2}{1-\Delta^2}
+\end{pmatrix}.
+\]
+Therefore,
+\[
+\psi_\mathrm{LWO}(O)
+=
+\frac{2}{1-\Delta^2}
+\{\psi_w(O)-\psi_l(O)\}
+=
+\frac{2}{1-(\tau_w-\tau_l)^2}
+\{\psi_w(O)-\psi_l(O)\}.
+\]
+
+Consequently, for each measure \(m\in\{\mathrm{NB},\mathrm{LWR},\mathrm{LWO}\}\),
+\[
+\sqrt N(\bar\eta_m-\eta_m)
+=
+\frac1{\sqrt N}
+\sum_{i=1}^N
+\psi_{\eta_m}(O_i)
++
+o_p(1),
+\]
+with asymptotic variance
+\[
+\sigma_m^2
+=
+E\{\psi_{\eta_m}(O)^2\}.
+\]
+
+
+\section{Three equivalent languages for linear covariate adjustment}
+\label{sec:three-equiv}
+
+This section explains why three common implementations of covariate adjustment lead to
+the same first-order adjusted estimator in randomized trials: influence-function (IF)
+projection, covariate adjustment on a derived outcome, and stable balancing weights
+(SBW). The equivalence holds asymptotically within a common linear feature class.
+
+Let \(m\in\{\mathrm{NB},\mathrm{LWR},\mathrm{LWO}\}\) be a smooth win measure and write
+\[
+\psi_m(O)\equiv \psi_{\eta_m}(O).
+\]
+Let
+\[
+Z=A-e,
+\]
+and let \(f:\mathcal X\to\mathbb R^p\) be a pre-specified feature map, typically including
+an intercept. We restrict the augmentation function to the linear class
+\[
+b_\beta(\mathbf X)=\beta^\top f(\mathbf X).
+\]
+Define the population projection coefficient
+\begin{equation}
+\label{eq:beta-star-linear}
+\beta_m^\star
+=
+\left[
+E\{Z^2 f(\mathbf X)f(\mathbf X)^\top\}
+\right]^{-1}
+E\{Zf(\mathbf X)\psi_m(O)\}.
+\end{equation}
+Under randomization, \(E\{Z^2\mid \mathbf X\}=e(1-e)\), so
+\[
+\beta_m^\star
+=
+\frac{1}{e(1-e)}
+\{E(ff^\top)\}^{-1}
+E\{Zf\psi_m\}.
+\]
+
+\subsection{Language 1: influence-function projection}
+
+The linear-class IF-projection estimator is
+\[
+\hat\eta_m^{\mathrm{IF}}
+=
+\bar\eta_m
+-
+\mathbb P_N\{Z\hat\beta_m^\top f(\mathbf X)\},
+\]
+where \(\hat\beta_m\) solves the empirical normal equation
+\[
+\mathbb P_N
+\left[
+Zf(\mathbf X)
+\{\hat\psi_m(O)-Z\beta^\top f(\mathbf X)\}
+\right]
+=0.
+\]
+At the population level, this normal equation yields \(\beta_m^\star\) in
+\eqref{eq:beta-star-linear}. Therefore the adjusted influence function is
+\begin{equation}
+\label{eq:if-proj-adj}
+\psi_m^{\mathrm{adj}}(O)
+=
+\psi_m(O)-Z\beta_m^{\star\top}f(\mathbf X).
+\end{equation}
+Because this is the \(L_2\) projection residual of \(\psi_m\) after projecting onto
+\[
+\mathcal L=\operatorname{span}\{Zf_1(\mathbf X),\ldots,Zf_p(\mathbf X)\},
+\]
+we have the orthogonality condition
+\[
+E\left[
+Zf(\mathbf X)\{\psi_m(O)-Z\beta_m^{\star\top}f(\mathbf X)\}
+\right]=0.
+\]
+Consequently,
+\[
+\Var\{\psi_m^{\mathrm{adj}}(O)\}
+=
+\Var\{\psi_m(O)\}
+-
+\Var\{Z\beta_m^{\star\top}f(\mathbf X)\}
+\le
+\Var\{\psi_m(O)\}.
+\]
+
+\subsection{Language 2: covariate adjustment on a derived outcome}
+
+Define the derived outcome
+\[
+D_{m,i}^\dagger
+=
+\frac{\hat\psi_m(O_i)}{A_i-e}.
+\]
+Consider the weighted least-squares problem
+\[
+\min_\beta
+\sum_{i=1}^N
+(A_i-e)^2
+\left\{
+D_{m,i}^\dagger-\beta^\top f(\mathbf X_i)
+\right\}^2.
+\]
+Since
+\[
+(A_i-e)^2
+\left\{
+\frac{\hat\psi_m(O_i)}{A_i-e}
+-
+\beta^\top f(\mathbf X_i)
+\right\}^2
+=
+\{\hat\psi_m(O_i)-(A_i-e)\beta^\top f(\mathbf X_i)\}^2,
+\]
+this weighted least-squares problem has exactly the same empirical normal equation as
+the IF-projection estimator. Thus the derived-outcome adjustment and IF projection share
+the same probability limit \(\beta_m^\star\) and the same adjusted influence function
+\eqref{eq:if-proj-adj}.
+
+This is the sense in which the ``derived outcome'' approach is simply an implementation
+of the same projection: after the pairwise U-statistic has been reduced to a
+subject-level influence function by the H\'ajek projection, covariate adjustment becomes
+ordinary weighted least squares on a scalar outcome.
+
+\subsection{Language 3: stable balancing weights}
+
+We now show how stable balancing weights yield the same first-order correction. Write the
+influence function in its arm-specific form
+\[
+\psi_m(O)
+=
+\frac{A}{e}g_{m,T}(\mathcal D)
++
+\frac{1-A}{1-e}g_{m,C}(\mathcal D),
+\]
+where
+\[
+g_{m,T}
+=
+\nabla h_m(\boldsymbol\tau)^\top
+(g_{w,T},g_{l,T})^\top,
+\qquad
+g_{m,C}
+=
+\nabla h_m(\boldsymbol\tau)^\top
+(g_{w,C},g_{l,C})^\top.
+\]
+Let
+\[
+\gamma_{m,T}
+=
+\{E(ff^\top)\}^{-1}E\{f g_{m,T}(\mathcal D)\mid A=1\},
+\]
+and
+\[
+\gamma_{m,C}
+=
+\{E(ff^\top)\}^{-1}E\{f g_{m,C}(\mathcal D)\mid A=0\}.
+\]
+Then the projection coefficient in \eqref{eq:beta-star-linear} can be written as
+\begin{equation}
+\label{eq:beta-star-arm}
+\beta_m^\star
+=
+\frac{1}{e}\gamma_{m,T}
+-
+\frac{1}{1-e}\gamma_{m,C}.
+\end{equation}
+
+SBW chooses arm-specific weights that balance the feature means in each arm to the pooled
+mean while remaining as close as possible to uniform weights. Ignoring the non-negativity
+constraint, the treated-arm weights satisfy
+\[
+\frac1{n_1}\sum_{i:A_i=1}w_{1i}f(\mathbf X_i)
+=
+\bar f,
+\qquad
+\frac1{n_1}\sum_{i:A_i=1}w_{1i}=1,
+\]
+where
+\[
+\bar f=\frac1N\sum_{i=1}^N f(\mathbf X_i).
+\]
+The control-arm weights \(w_{0i}\) are defined analogously.
+
+Let
+\[
+\bar g_{m,T}
+=
+\frac1{n_1}\sum_{A_i=1}g_{m,T}(\mathcal D_i),
+\qquad
+\bar g_{m,C}
+=
+\frac1{n_0}\sum_{A_i=0}g_{m,C}(\mathcal D_i),
+\]
+and let \(\bar g_{m,T}^{\,w}\) and \(\bar g_{m,C}^{\,w}\) denote the corresponding SBW
+weighted means. A first-order expansion of the closed-form SBW weights gives
+\[
+\bar g_{m,T}^{\,w}-\bar g_{m,T}
+=
+(\bar f-\bar f_T)^\top\gamma_{m,T}+o_p(N^{-1/2}),
+\]
+and
+\[
+\bar g_{m,C}^{\,w}-\bar g_{m,C}
+=
+(\bar f-\bar f_C)^\top\gamma_{m,C}+o_p(N^{-1/2}).
+\]
+Since
+\[
+\bar f=e\bar f_T+(1-e)\bar f_C+o_p(N^{-1/2}),
+\]
+we have
+\[
+\bar f-\bar f_T=-(1-e)(\bar f_T-\bar f_C)+o_p(N^{-1/2}),
+\]
+and
+\[
+\bar f-\bar f_C=e(\bar f_T-\bar f_C)+o_p(N^{-1/2}).
+\]
+Therefore
+\[
+(\bar g_{m,T}^{\,w}+\bar g_{m,C}^{\,w})
+-
+(\bar g_{m,T}+\bar g_{m,C})
+=
+-\{(1-e)\gamma_{m,T}-e\gamma_{m,C}\}^\top
+(\bar f_T-\bar f_C)
++
+o_p(N^{-1/2}).
+\]
+On the other hand,
+\[
+\mathbb P_N\{Zf(\mathbf X)\}
+=
+e(1-e)(\bar f_T-\bar f_C)+o_p(N^{-1/2}).
+\]
+Using \eqref{eq:beta-star-arm}, we obtain
+\[
+(\bar g_{m,T}^{\,w}+\bar g_{m,C}^{\,w})
+-
+(\bar g_{m,T}+\bar g_{m,C})
+=
+-\mathbb P_N\{Z\beta_m^{\star\top}f(\mathbf X)\}
++
+o_p(N^{-1/2}).
+\]
+Thus the SBW correction is the same first-order correction as IF projection.
+
+\begin{proposition}[Asymptotic equivalence of the three procedures]
+\label{prop:three-equiv}
+Assume simple randomization, \(E\{f(\mathbf X)f(\mathbf X)^\top\}\) is nonsingular, and
+the SBW non-negativity constraint is asymptotically inactive. Then the IF-projection
+estimator, the derived-outcome weighted least-squares estimator, and the stable balancing
+weights estimator have the same adjusted influence function
+\[
+\psi_m^{\mathrm{adj}}(O)
+=
+\psi_m(O)-(A-e)\beta_m^{\star\top}f(\mathbf X).
+\]
+Consequently, they are asymptotically equivalent and satisfy the same first-order
+no-loss property,
+\[
+\Var\{\psi_m^{\mathrm{adj}}(O)\}
+\le
+\Var\{\psi_m(O)\}.
+\]
+\end{proposition}
+
+\begin{remark}
+The three procedures differ only in implementation. IF projection subtracts the
+least-squares projection of the influence function; derived-outcome adjustment fits the
+same projection by weighted least squares; SBW obtains the same correction by balancing
+the feature means across randomized arms. The equivalence becomes available for win
+statistics because the H\'ajek projection reduces the original pairwise U-statistic to a
+subject-level influence function.
+\end{remark}
+
+
+\end{document}

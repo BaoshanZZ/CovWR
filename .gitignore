@@ -1,0 +1,30 @@
+# Large simulation outputs and cluster logs
+simulation_output*/
+slurm_logs/
+
+# R workspace/cache artifacts
+.Rhistory
+.RData
+.Ruserdata
+*.RData
+*.rds
+*.RDS
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# OS/editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+
