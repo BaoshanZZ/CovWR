@@ -59,8 +59,12 @@ wald_row <- function(method,
 
 if_se_for_measure <- function(psi_components, tau_w, tau_l, measure, N, params = default_dgm_params()) {
   grad <- measure_gradient(measure, tau_w, tau_l, params)
-  psi_m <- as.vector(psi_components[, "w"] * grad[["w"]] + psi_components[, "l"] * grad[["l"]])
-  sqrt(mean((psi_m - mean(psi_m))^2) / N)
+  psi_mat <- as.matrix(psi_components[, c("w", "l"), drop = FALSE])
+  centered <- sweep(psi_mat, 2L, colMeans(psi_mat), FUN = "-")
+  sigma_hat <- crossprod(centered) / N
+  grad_vec <- matrix(c(grad[["w"]], grad[["l"]]), ncol = 1L)
+  var_hat <- as.numeric(crossprod(grad_vec, sigma_hat %*% grad_vec) / N)
+  sqrt(max(var_hat, 0))
 }
 
 fit_if_projection_components <- function(dat, pairwise, feature_fun = adjustment_features) {
