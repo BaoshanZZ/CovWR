@@ -1,0 +1,30 @@
+Analysis script: /hpc/home/bz91/WRCov/RealAna/Trial23/analysis_trial23_win_ladj.R
+Data file: /hpc/home/bz91/WRCov/RealAna/Trial23/trial23.rds
+Data MD5: b8dc1944ffe02a42e1cc2c31d95c388a
+Dictionary file: /hpc/home/bz91/WRCov/RealAna/Trial23/trial23_dictionary.csv
+Dictionary MD5: 23811e39d9f5bc53052f0e6b02897570
+Known randomization probability e: 0.5
+
+R version 4.4.0 (2024-04-24)
+Platform: x86_64-pc-linux-gnu
+Running under: AlmaLinux 9.7 (Moss Jungle Cat)
+
+Matrix products: default
+BLAS:   /admin/apps/rhel9/R-4.4.0/lib64/R/lib/libRblas.so
+LAPACK: /admin/apps/rhel9/R-4.4.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.0
+
+locale:
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C
+
+time zone: America/New_York
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base
+
+loaded via a namespace (and not attached):
+[1] compiler_4.4.0    cli_3.6.5         ragg_1.3.2        tools_4.4.0
+[5] textshaping_0.4.0 lifecycle_1.0.4   rlang_1.1.6       systemfonts_1.3.2

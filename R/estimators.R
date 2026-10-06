@@ -1,12 +1,21 @@
-clip_tau <- function(x, params = default_dgm_params()) {
-  pmin(1 - params$min_tau, pmax(params$min_tau, x))
+validate_measure_domain <- function(tau_w, tau_l) {
+  tau <- c(w = tau_w, l = tau_l)
+  if (length(tau_w) != 1L || length(tau_l) != 1L || any(!is.finite(tau))) {
+    stop("tau_w and tau_l must be finite scalar values.", call. = FALSE)
+  }
+  if (tau_w <= 0 || tau_l <= 0) {
+    stop("LWR is undefined unless tau_w and tau_l are both positive.", call. = FALSE)
+  }
+  delta <- tau_w - tau_l
+  if (abs(delta) >= 1) {
+    stop("LWO is undefined unless abs(tau_w - tau_l) is less than one.", call. = FALSE)
+  }
+  invisible(tau)
 }
 
 calc_measures <- function(tau_w, tau_l, params = default_dgm_params()) {
-  tau_w <- clip_tau(tau_w, params)
-  tau_l <- clip_tau(tau_l, params)
+  validate_measure_domain(tau_w, tau_l)
   delta <- tau_w - tau_l
-  delta <- pmin(1 - params$min_tau, pmax(-1 + params$min_tau, delta))
 
   c(
     NB = tau_w - tau_l,
@@ -17,10 +26,8 @@ calc_measures <- function(tau_w, tau_l, params = default_dgm_params()) {
 
 measure_gradient <- function(measure, tau_w, tau_l, params = default_dgm_params()) {
   measure <- match.arg(measure, c("NB", "LWR", "LWO"))
-  tau_w <- clip_tau(tau_w, params)
-  tau_l <- clip_tau(tau_l, params)
+  validate_measure_domain(tau_w, tau_l)
   delta <- tau_w - tau_l
-  delta <- pmin(1 - params$min_tau, pmax(-1 + params$min_tau, delta))
 
   switch(
     measure,
@@ -57,6 +64,22 @@ wald_row <- function(method,
   )
 }
 
+add_bootstrap_wald_columns <- function(out,
+                                       alpha = 0.05,
+                                       null_value = 0) {
+  zcrit <- stats::qnorm(1 - alpha / 2)
+  out[, `:=`(
+    ci_low_boot = estimate - zcrit * se_boot,
+    ci_high_boot = estimate + zcrit * se_boot,
+    p_value_boot = 2 * stats::pnorm(-abs((estimate - null_value) / se_boot))
+  )]
+  out[, `:=`(
+    reject_boot = p_value_boot < alpha,
+    covered_boot = ci_low_boot <= truth & truth <= ci_high_boot
+  )]
+  out[]
+}
+
 if_se_for_measure <- function(psi_components, tau_w, tau_l, measure, N, params = default_dgm_params()) {
   grad <- measure_gradient(measure, tau_w, tau_l, params)
   psi_mat <- as.matrix(psi_components[, c("w", "l"), drop = FALSE])
@@ -67,16 +90,28 @@ if_se_for_measure <- function(psi_components, tau_w, tau_l, measure, N, params =
   sqrt(max(var_hat, 0))
 }
 
-fit_if_projection_components <- function(dat, pairwise, feature_fun = adjustment_features) {
-  Fmat <- feature_fun(dat)
-  Z <- dat$A - pairwise$ehat
+fit_if_projection_components <- function(dat, pairwise) {
+  Fmat <- adjustment_features(dat)
+  Z <- dat$A - pairwise$allocation_prob
   design <- Fmat * as.numeric(Z)
+  gram <- crossprod(design)
+  gram_rank <- qr(gram)$rank
+  if (gram_rank < ncol(gram)) {
+    stop(
+      "The LADJ Gram matrix is singular (rank ", gram_rank,
+      " of ", ncol(gram), ").",
+      call. = FALSE
+    )
+  }
+  reciprocal_condition <- rcond(gram)
+  if (!is.finite(reciprocal_condition) || reciprocal_condition <= .Machine$double.eps) {
+    stop("The LADJ Gram matrix is numerically singular.", call. = FALSE)
+  }
 
   fit_one <- function(y) {
-    fit <- stats::lm.fit(x = design, y = y)
-    beta <- fit$coefficients
-    beta[is.na(beta)] <- 0
-    beta
+    score <- crossprod(design, y)
+    beta <- solve(gram, score)
+    stats::setNames(as.numeric(beta), colnames(Fmat))
   }
 
   beta_w <- fit_one(pairwise$psi[, "w"])
@@ -87,16 +122,25 @@ fit_if_projection_components <- function(dat, pairwise, feature_fun = adjustment
   )
   psi_adj <- pairwise$psi - b_hat * as.numeric(Z)
 
+  idx_t <- dat$A == 1L
+  idx_c <- !idx_t
+  imbalance <- colMeans(Fmat[idx_t, , drop = FALSE]) -
+    colMeans(Fmat[idx_c, , drop = FALSE])
+  imbalance_factor <- sum(idx_t) * sum(idx_c) / nrow(dat)^2
   tau_adj <- c(
-    w = pairwise$tau_w - mean(Z * b_hat[, "w"]),
-    l = pairwise$tau_l - mean(Z * b_hat[, "l"])
+    w = pairwise$tau_w - imbalance_factor * sum(beta_w * imbalance),
+    l = pairwise$tau_l - imbalance_factor * sum(beta_l * imbalance)
   )
 
   list(
     beta = cbind(w = beta_w, l = beta_l),
     b_hat = b_hat,
     psi_adj = psi_adj,
-    tau_adj = tau_adj
+    tau_adj = tau_adj,
+    imbalance = imbalance,
+    imbalance_factor = imbalance_factor,
+    gram_rank = gram_rank,
+    reciprocal_condition = reciprocal_condition
   )
 }
 
@@ -108,30 +152,29 @@ fadj_feature_matrix <- function(dat,
     return(matrix(0, nrow = n, ncol = 0L))
   }
 
-  X1 <- dat$X1
-  X2 <- dat$X2
-  X3 <- dat$X3
+  covariate_names <- adjustment_covariate_names(dat)
+  X <- as.matrix(dat[, ..covariate_names])
   if (identical(learner, "linear")) {
-    return(cbind(intercept = 1, X1 = X1, X2 = X2, X3 = X3))
+    return(cbind(intercept = 1, X))
   }
 
   if (identical(learner, "interactions")) {
-    return(cbind(
-      intercept = 1,
-      X1 = X1,
-      X2 = X2,
-      X3 = X3,
-      X1_X2 = X1 * X2,
-      X1_X3 = X1 * X3,
-      X2_X3 = X2 * X3
-    ))
+    pairs <- utils::combn(covariate_names, 2L)
+    interaction_terms <- vapply(seq_len(ncol(pairs)), function(j) {
+      X[, pairs[1L, j]] * X[, pairs[2L, j]]
+    }, numeric(n))
+    colnames(interaction_terms) <- apply(pairs, 2L, paste, collapse = "_")
+    return(cbind(intercept = 1, X, interaction_terms))
   }
 
-  sx1 <- splines::ns(X1, df = 3)
-  sx2 <- splines::ns(X2, df = 3)
-  colnames(sx1) <- paste0("ns_X1_", seq_len(ncol(sx1)))
-  colnames(sx2) <- paste0("ns_X2_", seq_len(ncol(sx2)))
-  cbind(intercept = 1, sx1, sx2, X3 = X3)
+  continuous_names <- intersect(c("X1", "X2", "X4", "X5"), covariate_names)
+  spline_terms <- lapply(continuous_names, function(name) {
+    out <- splines::ns(dat[[name]], df = 3)
+    colnames(out) <- paste0("ns_", name, "_", seq_len(ncol(out)))
+    out
+  })
+  binary_names <- intersect("X3", covariate_names)
+  do.call(cbind, c(list(intercept = rep(1, n)), spline_terms, list(X[, binary_names, drop = FALSE])))
 }
 
 fit_direct_risk_linear <- function(Fmat, Z, y, train_idx = seq_along(y)) {
@@ -185,7 +228,7 @@ fit_fadj_components <- function(dat,
                                 pairwise,
                                 learners = c("zero", "linear", "interactions", "splines"),
                                 n_folds = 5L) {
-  Z <- dat$A - pairwise$ehat
+  Z <- dat$A - pairwise$allocation_prob
 
   fit_one <- function(y) {
     selected <- select_fadj_learner(dat, y, Z, learners, n_folds)
@@ -283,19 +326,102 @@ estimate_sbw_tau <- function(dat, pairwise, nonnegative = FALSE) {
   )
 }
 
+stratified_bootstrap_sample <- function(dat) {
+  idx_t <- which(dat$A == 1L)
+  idx_c <- which(dat$A == 0L)
+  boot_idx <- c(
+    sample(idx_t, length(idx_t), replace = TRUE),
+    sample(idx_c, length(idx_c), replace = TRUE)
+  )
+  boot <- data.table::copy(dat[boot_idx])
+  boot[, id := seq_len(.N)]
+  boot[]
+}
+
+bootstrap_method_estimates <- function(dat,
+                                       B,
+                                       allocation_prob,
+                                       params = default_dgm_params(),
+                                       include_sbw = FALSE,
+                                       sbw_nonnegative = FALSE,
+                                       method_names = c("UNADJ", "LADJ"),
+                                       alpha = 0.05) {
+  if (B <= 0L) {
+    return(NULL)
+  }
+
+  truth_na <- c(NB = NA_real_, LWR = NA_real_, LWO = NA_real_)
+  rows <- vector("list", B)
+  for (b in seq_len(B)) {
+    boot_dat <- stratified_bootstrap_sample(dat)
+    boot_est <- estimate_all_methods(
+      dat = boot_dat,
+      allocation_prob = allocation_prob,
+      truth_values = truth_na,
+      params = params,
+      sbw_nonnegative = sbw_nonnegative,
+      include_sbw = include_sbw,
+      bootstrap_B = 0L,
+      compute_inference = FALSE,
+      method_names = method_names,
+      alpha = alpha
+    )
+    rows[[b]] <- boot_est[, .(
+      bootstrap_id = b,
+      method,
+      estimand,
+      estimate
+    )]
+  }
+
+  boot <- data.table::rbindlist(rows, use.names = TRUE)
+  boot[, .(
+    bootstrap_B = .N,
+    boot_var = stats::var(estimate),
+    se_boot = stats::sd(estimate)
+  ), by = .(method, estimand)]
+}
+
 estimate_all_methods <- function(dat,
+                                 allocation_prob,
                                  truth_values = c(NB = NA_real_, LWR = NA_real_, LWO = NA_real_),
                                  params = default_dgm_params(),
                                  sbw_nonnegative = FALSE,
                                  include_sbw = FALSE,
+                                 bootstrap_B = 0L,
+                                 compute_inference = TRUE,
+                                 method_names = c("UNADJ", "LADJ"),
                                  alpha = 0.05) {
-  pairwise <- compute_pairwise_quantities(dat, params)
+  method_names <- unique(toupper(method_names))
+  allowed_methods <- c("UNADJ", "LADJ", "FADJ", "SBW")
+  bad_methods <- setdiff(method_names, allowed_methods)
+  if (length(bad_methods) > 0L) {
+    stop("Unknown method_names value(s): ", paste(bad_methods, collapse = ", "), call. = FALSE)
+  }
+  if ("SBW" %in% method_names) {
+    include_sbw <- TRUE
+  }
+
+  pairwise <- compute_pairwise_quantities(
+    dat = dat,
+    allocation_prob = allocation_prob,
+    params = params
+  )
   N <- nrow(dat)
   rows <- list()
+  tau_lookup <- list()
+  fadj <- NULL
 
   add_method_rows <- function(method, tau, psi_components) {
     measures <- calc_measures(tau[["w"]], tau[["l"]], params)
     data.table::rbindlist(lapply(names(measures), function(m) {
+      if (!isTRUE(compute_inference)) {
+        return(data.table::data.table(
+          method = method,
+          estimand = m,
+          estimate = unname(measures[[m]])
+        ))
+      }
       se <- if_se_for_measure(psi_components, tau[["w"]], tau[["l"]], m, N, params)
       wald_row(
         method = method,
@@ -309,35 +435,67 @@ estimate_all_methods <- function(dat,
     }))
   }
 
-  tau_unadj <- c(w = pairwise$tau_w, l = pairwise$tau_l)
-  rows[["UNADJ"]] <- add_method_rows("UNADJ", tau_unadj, pairwise$psi)
+  if ("UNADJ" %in% method_names) {
+    tau_unadj <- c(w = pairwise$tau_w, l = pairwise$tau_l)
+    rows[["UNADJ"]] <- add_method_rows("UNADJ", tau_unadj, pairwise$psi)
+    tau_lookup[["UNADJ"]] <- tau_unadj
+  }
 
-  ladj <- fit_if_projection_components(dat, pairwise)
-  rows[["LADJ"]] <- add_method_rows("LADJ", ladj$tau_adj, ladj$psi_adj)
+  needs_ladj <- any(c("LADJ", "SBW") %in% method_names)
+  if (needs_ladj) {
+    ladj <- fit_if_projection_components(dat, pairwise)
+    if ("LADJ" %in% method_names) {
+      rows[["LADJ"]] <- add_method_rows("LADJ", ladj$tau_adj, ladj$psi_adj)
+      tau_lookup[["LADJ"]] <- ladj$tau_adj
+    }
+  }
 
-  fadj <- fit_fadj_components(dat, pairwise)
-  rows[["FADJ"]] <- add_method_rows("FADJ", fadj$tau_adj, fadj$psi_adj)
+  if ("FADJ" %in% method_names) {
+    fadj <- fit_fadj_components(dat, pairwise)
+    rows[["FADJ"]] <- add_method_rows("FADJ", fadj$tau_adj, fadj$psi_adj)
+    tau_lookup[["FADJ"]] <- fadj$tau_adj
+  }
 
-  if (isTRUE(include_sbw)) {
+  if (isTRUE(include_sbw) && "SBW" %in% method_names) {
     sbw <- estimate_sbw_tau(dat, pairwise, nonnegative = sbw_nonnegative)
     # The SBW standard error uses the first-order equivalent IF projection variance.
     rows[["SBW"]] <- add_method_rows("SBW", sbw$tau, ladj$psi_adj)
+    tau_lookup[["SBW"]] <- sbw$tau
   }
 
   out <- data.table::rbindlist(rows, use.names = TRUE)
-  tau_lookup <- list(
-    UNADJ = tau_unadj,
-    LADJ = ladj$tau_adj,
-    FADJ = fadj$tau_adj
-  )
-  if (isTRUE(include_sbw)) {
-    tau_lookup[["SBW"]] <- sbw$tau
-  }
   out[, `:=`(
     tau_w = vapply(as.character(method), function(x) tau_lookup[[x]][["w"]], numeric(1)),
     tau_l = vapply(as.character(method), function(x) tau_lookup[[x]][["l"]], numeric(1)),
-    learner_w = ifelse(method == "FADJ", unname(fadj$learners[["w"]]), NA_character_),
-    learner_l = ifelse(method == "FADJ", unname(fadj$learners[["l"]]), NA_character_)
+    learner_w = if (!is.null(fadj)) ifelse(method == "FADJ", unname(fadj$learners[["w"]]), NA_character_) else NA_character_,
+    learner_l = if (!is.null(fadj)) ifelse(method == "FADJ", unname(fadj$learners[["l"]]), NA_character_) else NA_character_
   )]
+
+  if (bootstrap_B > 0L) {
+    boot_se <- bootstrap_method_estimates(
+      dat = dat,
+      B = as.integer(bootstrap_B),
+      allocation_prob = allocation_prob,
+      params = params,
+      include_sbw = include_sbw,
+      sbw_nonnegative = sbw_nonnegative,
+      method_names = method_names,
+      alpha = alpha
+    )
+    out <- merge(out, boot_se, by = c("method", "estimand"), all.x = TRUE, sort = FALSE)
+    out <- add_bootstrap_wald_columns(out, alpha = alpha)
+  } else {
+    out[, `:=`(
+      bootstrap_B = as.integer(bootstrap_B),
+      boot_var = NA_real_,
+      se_boot = NA_real_,
+      ci_low_boot = NA_real_,
+      ci_high_boot = NA_real_,
+      p_value_boot = NA_real_,
+      reject_boot = NA,
+      covered_boot = NA
+    )]
+  }
+
   out[]
 }

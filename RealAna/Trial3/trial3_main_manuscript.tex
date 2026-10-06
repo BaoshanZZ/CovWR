@@ -1,0 +1,82 @@
+% Requires amsmath, booktabs, and multirow.
+\subsection{Application to electronic health record alerts for acute kidney injury}
+\label{sec:trial3_application}
+
+\paragraph{Trial objective and analysis population.}
+We applied the proposed method to the double-blind, multicenter, parallel randomized
+clinical trial of electronic health record alerts for acute kidney injury (AKI) reported
+by \citet{wilson2021electronic}. The trial evaluated whether an automated electronic
+pop-up alert, accompanied by a link to an AKI order set, improved mortality, dialysis, and
+AKI progression among adult inpatients with AKI across six hospitals. Eligible patients
+were randomized at the patient level within the electronic health record using simple
+randomization with concealed allocation. The analysis included all $N=6030$ randomized
+participants: $n_1=3059$ assigned to the alert and $n_0=2971$ assigned to usual care. We
+coded the alert as $A_i=1$ and usual care as $A_i=0$, and used the known randomization
+probability $e=1/2$ rather than the realized allocation fraction.
+
+\paragraph{Fixed-horizon hierarchical endpoint.}
+The original primary outcome was the occurrence of AKI progression, dialysis, or death
+within 14 days of randomization. We used the same restriction horizon, $S=14$ days, but
+organized the three components hierarchically by clinical severity. Specifically, we
+defined $D_{1i}(S)=I(\text{death by day 14})$,
+$D_{2i}(S)=I(\text{dialysis by day 14})$, and
+$D_{3i}(S)=I(\text{AKI progression by day 14})$, giving
+$\mathcal D_i(S)=\{D_{1i}(S),D_{2i}(S),D_{3i}(S)\}$. All components were adverse binary
+outcomes, so 0 was favorable. All three component indicators were observed for every
+randomized participant (0 missing values for each component); consequently, no outcome
+imputation or outcome-based subject exclusion was required. Participants were compared
+lexicographically in the order death, dialysis, and AKI progression; the participant with
+value 0 at the first unequal component won, and a pair was tied if all three components
+were equal. This was a status-based comparison at the common horizon $S$: no
+component-specific event times, discharge times, or lengths of stay were used.
+
+\paragraph{Analysis.}
+We compared the unadjusted estimator $\bar\eta_m$ with the proposed linear direct
+influence-function projection estimator $\widehat\eta_m^{\mathrm{lin}}$ described in
+Section~\ref{sec:algorithm}. The adjustment set comprised the prespecified, fully observed
+baseline variables hospital, age over 90 years, sex, ICU status at randomization,
+Elixhauser comorbidity score, diabetes, and congestive heart failure. Categorical variables
+were reference coded, and the resulting feature vector was centered without an intercept.
+The adjusted elementary win and loss probabilities were transformed exactly to NB, LWR,
+and LWO, with influence-function-based inference for both methods.
+
+\paragraph{Results.}
+Among the $n_1n_0=9{,}088{,}289$ treatment--control pairs, the Alert participant won
+$1{,}637{,}306$ comparisons, lost $1{,}669{,}083$, and tied $5{,}781{,}900$, giving
+\[
+  (\bar\tau_w,\bar\tau_l,\bar\tau_t)
+  =(0.1802,0.1837,0.6362).
+\]
+Table~\ref{tab:trial3_primary} shows little evidence of a treatment benefit on any win
+measure. Linear adjustment reduced the analytical standard error by approximately $5\%$
+and the estimated variance by approximately $9\%$, but did not alter the substantive
+conclusion. On the natural scales, the unadjusted and adjusted win ratios were 0.981
+(95\% CI, 0.875--1.100) and 0.957 (95\% CI, 0.859--1.068), respectively; the corresponding
+win odds were 0.993 (95\% CI, 0.953--1.035) and 0.984 (95\% CI, 0.946--1.024).
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Unadjusted and linearly adjusted estimates in the AKI alert trial. LWR and LWO are
+reported on the log scale. PVR is the percent variance reduction relative to the
+unadjusted estimator based on analytical standard errors.}
+\label{tab:trial3_primary}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{llrrrrrr}
+\toprule
+Measure & Method & Estimate & ASE & 95\% CI lower & 95\% CI upper & $p$-value & PVR, \% \\
+\midrule
+\multirow{2}{*}{NB}
+  & $\bar\eta_m$ & -0.0035 & 0.0106 & -0.0243 & 0.0173 & 0.742 & -- \\
+  & $\widehat\eta_m^{\mathrm{lin}}$ & -0.0079 & 0.0101 & -0.0277 & 0.0119 & 0.434 & 9.2 \\
+\addlinespace[2pt]
+\multirow{2}{*}{LWR}
+  & $\bar\eta_m$ & -0.0192 & 0.0583 & -0.1335 & 0.0950 & 0.742 & -- \\
+  & $\widehat\eta_m^{\mathrm{lin}}$ & -0.0434 & 0.0555 & -0.1522 & 0.0653 & 0.434 & 9.4 \\
+\addlinespace[2pt]
+\multirow{2}{*}{LWO}
+  & $\bar\eta_m$ & -0.0070 & 0.0212 & -0.0486 & 0.0346 & 0.742 & -- \\
+  & $\widehat\eta_m^{\mathrm{lin}}$ & -0.0158 & 0.0202 & -0.0554 & 0.0238 & 0.434 & 9.2 \\
+\bottomrule
+\end{tabular}
+\end{table*}

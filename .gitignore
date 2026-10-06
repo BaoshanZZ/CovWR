@@ -1,6 +1,16 @@
 # Large simulation outputs and cluster logs
 simulation_output*/
 slurm_logs/
+*.sbatch
+
+# Local manuscript assembly files (generated table fragments under results are versioned)
+/simulation_*_revised.tex
+/manuscript_*.md
+
+# Retired cluster-only R entry points
+R/*batch*.R
+R/rerun_*.R
+R/*seed_sensitivity.R
 
 # Manuscript and local plotting helper are kept locally but not versioned here
 main*.tex

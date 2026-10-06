@@ -1,0 +1,8 @@
+"Score","Interpretation","Fixed_gradient_projection_reduction_percent"
+"psi_w","Elementary win IF",4.43776754326333
+"psi_l","Elementary loss IF",1.51975846869149
+"psi_w_plus_psi_l","Non-tie/activity direction",4.57090559763054
+"psi_w_minus_psi_l","NB direction",2.11738730005765
+"NB_IF_at_unadjusted_gradient","NB score using one common fixed gradient",2.11738730005765
+"WR_IF_at_unadjusted_gradient","WR score using one common fixed gradient",1.84038174710985
+"WO_IF_at_unadjusted_gradient","WO score using one common fixed gradient",2.11738730005766

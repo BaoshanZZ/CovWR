@@ -1,0 +1,2 @@
+"Trial","Number_features","Gram_rank","Smallest_eigenvalue","Largest_eigenvalue","Condition_number","Scaled_condition_number","Max_centering_identity_error","Max_tau_formula_error","Max_scaled_fitted_value_error","Max_projection_normal_equation_error","Min_adjusted_covariance_eigenvalue"
+"Trial 5",10,10,85.3647947344543,304355.654452899,3565.35332158489,5.64421290541102,0.0000000000000031641356201817,0.00000000000000000303576608295941,0.000000000000109856568286659,0.0000000000107331921128662,0.173798755715125

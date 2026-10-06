@@ -1,0 +1,4 @@
+"Outcome","Variable","Missing"
+"14-day death","YS_death_event",0
+"14-day dialysis","YS_dialysis_event",0
+"14-day AKI progression","YS_aki_progression_event",0

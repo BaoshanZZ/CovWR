@@ -1,0 +1,2 @@
+"Method","Number_features","Gram_rank","Smallest_eigenvalue","Largest_eigenvalue","Condition_number","Scaled_condition_number","Max_centering_identity_error","Max_tau_formula_error","Max_scaled_fitted_value_error","Min_adjusted_covariance_eigenvalue"
+"LADJ sensitivity using all eligible complete baseline covariates",17,17,0.792839294764383,4824.20313427376,6084.71750344743,18.5123828302488,0.000000000000000971445146547012,0.00000000000000000520417042793042,0.00000000000000680011602582908,0.134014721377397

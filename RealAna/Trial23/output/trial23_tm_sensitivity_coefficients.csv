@@ -1,0 +1,13 @@
+"HCE_definition","Method","Covariate","beta_w","beta_l"
+"Threshold-free SOFA","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_SOFA_0d",0.0315277696011828,-0.0319078323953618
+"Threshold-free SOFA","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_SIRS_0d",-0.0813449553457296,0.0804616867046622
+"Threshold-free SOFA","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_Ddimer_0d",-0.00140186422673368,0.00149843743264365
+"Threshold-free SOFA","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_platelet_0d",0.00194505937561822,-0.00192564133955625
+"Threshold-free SOFA","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_TM_imp",-0.0521636505819929,0.0524731346432865
+"Threshold-free SOFA","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_TM_missing",-0.221678401450182,0.191837460777769
+"2-point SOFA margin","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_SOFA_0d",0.0128892909450583,-0.0132693537392373
+"2-point SOFA margin","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_SIRS_0d",-0.0602168672818465,0.0593335986407791
+"2-point SOFA margin","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_Ddimer_0d",-0.000515700616576793,0.000612273822486767
+"2-point SOFA margin","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_platelet_0d",0.00525865745200938,-0.00523923941594743
+"2-point SOFA margin","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_TM_imp",-0.0439882878077292,0.0442977718690228
+"2-point SOFA margin","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","X_TM_missing",-0.364695084978576,0.334854144306163

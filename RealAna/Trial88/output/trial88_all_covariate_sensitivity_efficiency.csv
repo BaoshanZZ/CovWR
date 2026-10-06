@@ -1,0 +1,4 @@
+"Method","Measure","Unadjusted_variance","Adjusted_variance","Variance_reduction_percent","Relative_efficiency"
+"LADJ sensitivity using all eligible complete baseline covariates","NB",0.0021183677843732,0.00201970724468928,4.6573848229622,1.04884893092469
+"LADJ sensitivity using all eligible complete baseline covariates","WR",0.175349674063713,0.152091155748024,13.2640784420494,1.15292485747312
+"LADJ sensitivity using all eligible complete baseline covariates","WO",0.00848382183886756,0.00810441878826051,4.47207706400518,1.0468143441892

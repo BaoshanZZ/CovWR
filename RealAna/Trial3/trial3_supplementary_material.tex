@@ -1,0 +1,175 @@
+% Requires amsmath, booktabs, multirow, and graphicx.
+\section{Additional details for the electronic AKI alert trial}
+\label{supp:trial3}
+
+\subsection{Endpoint construction and variable mapping}
+
+The application to the trial of electronic health record alerts for AKI
+\citep{wilson2021electronic} used the common restriction horizon $S=14$ days after
+randomization. The treatment and endpoint mappings were verified against the accompanying
+analysis data dictionary before analysis:
+\[
+\begin{array}{lll}
+\text{Role} & \text{Dataset variable} & \text{Coding}\\
+\hline
+\text{Treatment} & \texttt{Treatment}
+  & A_i=1:\ \texttt{Alert};\quad A_i=0:\ \texttt{Usual Care}\\
+\text{Death by day 14} & \texttt{YS\_death\_event} & 1=\text{event}\\
+\text{Dialysis by day 14} & \texttt{YS\_dialysis\_event} & 1=\text{event}\\
+\text{AKI progression by day 14} & \texttt{YS\_aki\_progression\_event}
+  & 1=\text{event}.
+\end{array}
+\]
+The three component variables were complete binary 0/1 indicators, and their elementwise
+maximum exactly reproduced the trial-defined 14-day composite
+\texttt{YP\_composite\_event}. Although the dataset also contained
+\texttt{YP\_composite\_time}, it was not used because the application concerned the
+fixed-$S$ status record
+\[
+  \mathcal D_i(14)
+  =
+  \{\text{death by day 14},\text{dialysis by day 14},
+    \text{AKI progression by day 14}\}.
+\]
+
+For a treatment--control pair $(i,j)$, define
+\[
+  E_{q-1}(i,j)
+  =\prod_{r=1}^{q-1}I\{D_{ri}(14)=D_{rj}(14)\},
+  \qquad E_0(i,j)=1.
+\]
+The win, loss, and tie kernels used in the analysis were
+\[
+\begin{split}
+  \varphi_w\{\mathcal D_i(14),\mathcal D_j(14)\}
+    &=\sum_{q=1}^3 E_{q-1}(i,j)
+      I\{D_{qi}(14)<D_{qj}(14)\},\\
+  \varphi_l\{\mathcal D_i(14),\mathcal D_j(14)\}
+    &=\sum_{q=1}^3 E_{q-1}(i,j)
+      I\{D_{qi}(14)>D_{qj}(14)\},\\
+  \varphi_t\{\mathcal D_i(14),\mathcal D_j(14)\}
+    &=\prod_{q=1}^3 I\{D_{qi}(14)=D_{qj}(14)\}.
+\end{split}
+\]
+Because only the first unequal component contributes, these kernels implement the
+prespecified priority death $\succ$ dialysis $\succ$ AKI progression.
+
+\subsection{Baseline adjustment variables}
+
+No participant was removed because of a missing baseline covariate, and no missing value
+was imputed. Table~\ref{tab:trial3_covariates} records the prespecified eligibility
+decisions. Hospital was treated as a six-level factor, with one reference category and five
+dummy variables. All binary variables were reference coded. The centered LADJ design
+therefore contained 11 columns.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Prespecified baseline covariates for the AKI alert trial LADJ analysis.}
+\label{tab:trial3_covariates}
+\begin{tabular}{lllrl}
+\toprule
+Covariate & Dataset variable & Type & Missing & Primary LADJ \\
+\midrule
+Hospital/site & \texttt{X\_hospital\_0m} & Categorical & 0 & Included \\
+Age & \texttt{X\_age\_0m} & Continuous & 507 & Excluded \\
+Age over 90 & \texttt{X\_age\_over\_90\_0m} & Binary & 0 & Included \\
+Sex & \texttt{X\_sex\_0m} & Binary & 0 & Included \\
+ICU status & \texttt{X\_icu\_0m} & Binary & 0 & Included \\
+Serum creatinine & \texttt{X\_creat\_0m} & Continuous & 2 & Excluded \\
+Baseline AKI stage & Not available & -- & -- & Excluded \\
+Elixhauser score & \texttt{X\_elx\_score\_0m} & Continuous & 0 & Included \\
+Diabetes & \texttt{X\_diabetes\_0m} & Binary & 0 & Included \\
+Congestive heart failure & \texttt{X\_chf\_0m} & Binary & 0 & Included \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Descriptive endpoint results}
+
+Table~\ref{tab:trial3_events} reports both the component event rates and mutually exclusive
+severity categories. For the latter, participants with overlapping events were assigned to
+their highest-priority observed event.
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Fourteen-day endpoint summaries by randomized arm in the AKI alert trial. Values are
+$n$ (\%).}
+\label{tab:trial3_events}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Arm & $N$ & Death & Dialysis & AKI progression &
+Death category & Alive+dialysis & Alive+AKI & None \\
+\midrule
+Usual Care & 2971 & 265 (8.92) & 93 (3.13) & 461 (15.52) &
+265 (8.92) & 65 (2.19) & 292 (9.83) & 2349 (79.06) \\
+Alert & 3059 & 272 (8.89) & 106 (3.47) & 487 (15.92) &
+272 (8.89) & 60 (1.96) & 321 (10.49) & 2406 (78.65) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Among $9{,}088{,}289$ treatment--control pairs, $16.23\%$ were decided at the death
+tier, $3.88\%$ at the dialysis tier, and $16.27\%$ at the AKI-progression tier; the
+remaining $63.62\%$ were ties. The resulting unadjusted elementary estimates were
+\[
+  \bar\tau_w=0.180156,\qquad
+  \bar\tau_l=0.183652,\qquad
+  \bar\tau_t=0.636192.
+\]
+After linear adjustment,
+\[
+  \widehat\tau_w^{\mathrm{lin}}=0.178194,\qquad
+  \widehat\tau_l^{\mathrm{lin}}=0.186105,\qquad
+  \widehat\tau_t^{\mathrm{lin}}=0.635701.
+\]
+
+\subsection{Complete treatment-effect results}
+
+Table~\ref{tab:trial3_full_results} reports inference on the NB, LWR, and LWO scales and
+the corresponding exponentiated WR and WO scales. Wald tests for WR and WO were conducted
+on the LWR and LWO scales, respectively. Relative efficiency was calculated as
+$\widehat{\mathrm{ASE}}_{\mathrm{UNADJ}}^2/
+ \widehat{\mathrm{ASE}}_{\mathrm{LADJ}}^2$ on the analysis scale.
+
+\begin{table*}[t]
+\centering
+\scriptsize
+\caption{Complete unadjusted and LADJ results for the AKI alert trial.}
+\label{tab:trial3_full_results}
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrrrr}
+\toprule
+Measure & Method & Estimate & ASE & 95\% CI & Natural-scale estimate (95\% CI) &
+$p$-value & Relative efficiency & PVR, \% \\
+\midrule
+\multirow{2}{*}{NB}
+& $\bar\eta_m$ & -0.00350 & 0.01060 & $(-0.02428,\ 0.01728)$ & -- &
+0.7416 & 1.000 & -- \\
+& $\widehat\eta_m^{\mathrm{lin}}$ & -0.00791 & 0.01010 &
+$(-0.02772,\ 0.01190)$ & -- & 0.4337 & 1.101 & 9.16 \\
+\addlinespace[2pt]
+\multirow{2}{*}{LWR / WR}
+& $\bar\eta_m$ & -0.01922 & 0.05828 & $(-0.13346,\ 0.09501)$ &
+$0.98096\ (0.87507,\ 1.09967)$ & 0.7415 & 1.000 & -- \\
+& $\widehat\eta_m^{\mathrm{lin}}$ & -0.04344 & 0.05549 &
+$(-0.15220,\ 0.06533)$ & $0.95749\ (0.85882,\ 1.06751)$ &
+0.4338 & 1.103 & 9.35 \\
+\addlinespace[2pt]
+\multirow{2}{*}{LWO / WO}
+& $\bar\eta_m$ & -0.00699 & 0.02120 & $(-0.04855,\ 0.03457)$ &
+$0.99303\ (0.95261,\ 1.03517)$ & 0.7416 & 1.000 & -- \\
+& $\widehat\eta_m^{\mathrm{lin}}$ & -0.01582 & 0.02021 &
+$(-0.05544,\ 0.02379)$ & $0.98430\ (0.94607,\ 1.02408)$ &
+0.4338 & 1.101 & 9.15 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
+
+The LADJ Gram matrix had full rank (11 of 11). Its condition number was 271.4 on the raw
+feature scale and 4.20 after feature scaling. The closed-form imbalance correction and
+direct projection formula agreed to numerical precision, and all adjusted estimates were
+exact transformations of the adjusted elementary win--loss vector.

@@ -1,0 +1,3 @@
+"Arm","Role","N","Death_n","Death_percent","Dialysis_n","Dialysis_percent","AKI_progression_n","AKI_progression_percent","Severity_death_n","Severity_death_percent","Severity_alive_dialysis_n","Severity_alive_dialysis_percent","Severity_alive_no_dialysis_AKI_n","Severity_alive_no_dialysis_AKI_percent","Severity_none_n","Severity_none_percent"
+"Usual Care","Control",2528,282,11.1550632911392,127,5.02373417721519,505,19.9762658227848,282,11.1550632911392,71,2.80854430379747,286,11.3132911392405,1889,74.7231012658228
+"Alert","Intervention",2532,253,9.99210110584518,123,4.85781990521327,475,18.7598736176935,253,9.99210110584518,65,2.56714060031596,267,10.5450236966825,1947,76.8957345971564

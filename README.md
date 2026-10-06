@@ -1,90 +1,143 @@
 # CovWR
 
-Simulation code for covariate-adjusted win measures with hierarchical endpoints.
+R implementation of unadjusted and linearly covariate-adjusted win measures for
+fixed-horizon hierarchical composite endpoints.
 
-The current simulation compares:
+The primary implementation estimates the elementary treatment win and loss probabilities,
+then transforms them to:
 
-- `UNADJ`: unadjusted two-sample win-measure estimator
-- `LADJ`: direct linear augmentation using raw covariates
-- `FADJ`: flexible direct augmentation using a discrete Super Learner library
+- net benefit (NB);
+- log win ratio (LWR) and win ratio (WR);
+- log win odds (LWO) and win odds (WO).
 
-The flexible library contains four working learners:
-
-- zero learner
-- linear main effects
-- linear main effects plus interactions
-- spline terms for continuous covariates
+The proposed linear adjustment (LADJ) directly projects the elementary influence
+functions on sample-centered baseline covariates using the known randomization probability.
+The final adjusted win measures are exact transformations of the adjusted win-loss vector.
 
 ## Repository Structure
 
-```text
+~~~text
 R/
-  config.R                  Scenario grid and DGM settings
-  dgm.R                     Data-generating mechanism
-  win_kernels.R             Hierarchical win/loss kernels
-  estimators.R              UNADJ, LADJ, and FADJ estimators
-  truth.R                   Monte Carlo truth calculation
-  summarize_results.R       Simulation summaries
-  run_simulation.R          Single-process or local parallel runner
-  run_scenario_batch.R      Slurm array scenario runner
-  combine_batch_results.R   Slurm result combiner
+  config.R
+  dgm.R
+  win_kernels.R
+  estimators.R
+  truth.R
+  summarize_results.R
+  run_simulation.R
+  generate_final_lwr_figures.R
+  generate_simulation_results_tables.R
+  validate_method_formulas.R
 
-submit_fadj_array.sbatch    Slurm array submission script
-combine_fadj_results.sbatch Slurm combine script
-```
+simulation_results_n1000_mc20000/
+  scenario_grid.csv
+  simulation_summary.csv
+  simulation_truth.csv
+  main_report/
+  supplementary_report/
 
-Large simulation outputs, Slurm logs, local manuscript drafts, and local plotting helpers are
-intentionally excluded from GitHub.
+RealAna/
+  analysis_trials3_5_win_ladj.R
+  Trial3/
+  Trial5/
+  Trial23/
+  Trial88/
+~~~
 
-## R Package Requirements
+Cluster submission scripts, intermediate simulation chunks, and scheduler logs are not
+versioned.
 
-The simulation uses locally installed R packages:
+## Primary Simulation
 
-- `data.table`
-- `future`
-- `future.apply`
-- `splines`
+The final simulation uses a one-factor-at-a-time design with:
 
-## Smoke Run
+- reference sample size N = 1000;
+- sample-size comparison N = 500;
+- balanced randomization except for the 1:2 allocation scenario;
+- 20,000 Monte Carlo replications per scenario;
+- 10,000,000 independently generated treatment-control pairs for alternative truth;
+- UNADJ and LADJ as the primary methods.
 
-From the repository root:
+The final aggregate results and manuscript-ready figures/tables are stored in
+simulation_results_n1000_mc20000/. Replication-level raw results and scenario chunk files
+are intentionally omitted.
 
-```bash
-Rscript -e "source('R/run_simulation.R'); run_simulation(run_full = FALSE, n_cores = 1, write_outputs = TRUE, output_dir = 'simulation_output_smoke')"
-```
+### Smoke test
 
-This runs a small number of replications for code validation.
+~~~bash
+Rscript -e "source('R/run_simulation.R'); run_simulation(
+  run_full = FALSE,
+  n_cores = 1,
+  write_outputs = TRUE,
+  output_dir = 'simulation_output_smoke'
+)"
+~~~
 
-## Full Slurm Run
+### Regenerate final figures
 
-The Slurm scripts are configured for the current one-factor scenario design with baseline
-`N = 1000` and sample-size comparison `N = 500`.
+~~~bash
+Rscript R/generate_final_lwr_figures.R \
+  --input-dir=simulation_results_n1000_mc20000 \
+  --output-dir=simulation_results_n1000_mc20000/main_report
+~~~
 
-```bash
-sbatch submit_fadj_array.sbatch
-```
+### Regenerate result tables
 
-After the array finishes, run or submit the combine script:
+~~~bash
+Rscript R/generate_simulation_results_tables.R \
+  --input-dir=simulation_results_n1000_mc20000 \
+  --output-dir=simulation_results_n1000_mc20000/main_report \
+  --estimands=LWR
 
-```bash
-sbatch combine_fadj_results.sbatch
-```
+Rscript R/generate_simulation_results_tables.R \
+  --input-dir=simulation_results_n1000_mc20000 \
+  --output-dir=simulation_results_n1000_mc20000/supplementary_report \
+  --estimands=NB,LWO
+~~~
 
-The combined output directory is currently configured in the scripts as:
+## Real-Data Analyses
 
-```text
-simulation_output_fadj_n1000/
-```
+The real-data directory contains analysis scripts, data dictionaries, numerical outputs,
+quality-control results, and manuscript-ready material.
 
-## Summary Metrics
+The shared Trial 3/Trial 5 analysis is run with:
 
-`simulation_summary.csv` includes:
+~~~bash
+Rscript RealAna/analysis_trials3_5_win_ladj.R
+~~~
 
-- `estimate_mean`: Monte Carlo mean of point estimates
-- `bias`: `mean(estimate - truth)`
-- `ESD`: empirical standard deviation of point estimates
-- `MC_SE_mean`: Monte Carlo standard error of `estimate_mean`
-- `ASE`: average analytical standard error
-- `CP`: empirical coverage probability
-- `reject_rate`: empirical rejection rate
-- `PVR`: percent variance reduction relative to `UNADJ`
+The .rds source datasets are not distributed through this repository. To reproduce an
+analysis, place the corresponding RDS file beside its dictionary using the filename
+expected by the script.
+
+Trial 3 corresponds to the multicenter randomized clinical trial of electronic health
+record alerts for acute kidney injury reported by Wilson et al. (BMJ 2021;372:m4786;
+doi:10.1136/bmj.m4786).
+
+## Validation
+
+Formula-level checks can be run with:
+
+~~~bash
+Rscript R/validate_method_formulas.R
+~~~
+
+The script verifies the elementary influence-function construction, closed-form LADJ
+solution, exact win-measure transformations, and covariance delta-method calculations.
+
+## Package Requirements
+
+Core simulation:
+
+- data.table
+- future
+- future.apply
+- splines
+
+Figures:
+
+- ggplot2
+- scales
+- ragg
+
+The real-data scripts use base R and do not require bootstrap inference.

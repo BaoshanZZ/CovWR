@@ -63,7 +63,17 @@ check_kernel_partition <- function(pair_obj) {
   isTRUE(all.equal(as.numeric(sums), rep(1, length(sums)), tolerance = 0))
 }
 
-compute_pairwise_quantities <- function(dat, params = default_dgm_params()) {
+compute_pairwise_quantities <- function(dat,
+                                        allocation_prob,
+                                        params = default_dgm_params()) {
+  allocation_prob <- as.numeric(allocation_prob)
+  if (length(allocation_prob) != 1L ||
+      is.na(allocation_prob) ||
+      allocation_prob <= 0 ||
+      allocation_prob >= 1) {
+    stop("allocation_prob must be a single known probability in (0, 1).", call. = FALSE)
+  }
+
   treated <- dat[A == 1L]
   control <- dat[A == 0L]
   mats <- hierarchical_pair_matrices(treated, control, params)
@@ -86,20 +96,20 @@ compute_pairwise_quantities <- function(dat, params = default_dgm_params()) {
   data.table::setkey(placement, id)
   placement <- placement[dat[, .(id)]]
 
-  ehat <- mean(dat$A)
   zero_na <- function(x) {
     x[is.na(x)] <- 0
     x
   }
-  psi_w <- dat$A / ehat * zero_na(placement$g_w_T) +
-    (1 - dat$A) / (1 - ehat) * zero_na(placement$g_w_C)
-  psi_l <- dat$A / ehat * zero_na(placement$g_l_T) +
-    (1 - dat$A) / (1 - ehat) * zero_na(placement$g_l_C)
+  psi_w <- dat$A / allocation_prob * zero_na(placement$g_w_T) +
+    (1 - dat$A) / (1 - allocation_prob) * zero_na(placement$g_w_C)
+  psi_l <- dat$A / allocation_prob * zero_na(placement$g_l_T) +
+    (1 - dat$A) / (1 - allocation_prob) * zero_na(placement$g_l_C)
 
   list(
     tau_w = tau_w,
     tau_l = tau_l,
-    ehat = ehat,
+    allocation_prob = allocation_prob,
+    realized_allocation = mean(dat$A),
     placement = placement,
     psi = cbind(w = psi_w, l = psi_l),
     matrices = mats

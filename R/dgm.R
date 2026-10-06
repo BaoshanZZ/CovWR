@@ -65,6 +65,8 @@ generate_subject_data <- function(N,
                                   outcome_shape = "linear",
                                   effect_heterogeneity = "homogeneous",
                                   endpoint_prognosis_pattern = "shared",
+                                  n_noise_covariates = 0L,
+                                  adjustment_covariate_pattern = "all_available",
                                   specification = NULL,
                                   params = default_dgm_params()) {
   effect <- match.arg(effect, c("null", "alternative"))
@@ -74,6 +76,17 @@ generate_subject_data <- function(N,
   outcome_shape <- match.arg(outcome_shape, c("linear", "nonlinear"))
   effect_heterogeneity <- match.arg(effect_heterogeneity, c("homogeneous", "heterogeneous"))
   endpoint_prognosis_pattern <- match.arg(endpoint_prognosis_pattern, c("shared", "endpoint_specific"))
+  n_noise_covariates <- as.integer(n_noise_covariates)
+  if (is.na(n_noise_covariates) || !n_noise_covariates %in% 0:2) {
+    stop("n_noise_covariates must be 0, 1, or 2.", call. = FALSE)
+  }
+  adjustment_covariate_pattern <- match.arg(
+    adjustment_covariate_pattern,
+    c("all_available", "omit_X3_add_X4", "omit_X3")
+  )
+  if (identical(adjustment_covariate_pattern, "omit_X3_add_X4") && n_noise_covariates < 1L) {
+    stop("omit_X3_add_X4 requires at least one noise covariate.", call. = FALSE)
+  }
 
   if (is.null(A)) {
     A <- stats::rbinom(N, size = 1L, prob = e)
@@ -131,7 +144,7 @@ generate_subject_data <- function(N,
   log_nfl <- zeta_D3 + stats::rnorm(N, mean = 0, sd = params$sigma_D3)
   nfl_score <- -log_nfl
 
-  data.table::data.table(
+  dat <- data.table::data.table(
     id = seq_len(N),
     A = A,
     X1 = X1,
@@ -146,6 +159,22 @@ generate_subject_data <- function(N,
     zeta_D2 = zeta_D2,
     zeta_D3 = zeta_D3
   )
+
+  if (n_noise_covariates >= 1L) {
+    dat[, X4 := stats::rnorm(.N)]
+  }
+  if (n_noise_covariates >= 2L) {
+    dat[, X5 := stats::rnorm(.N)]
+  }
+  adjustment_names <- if (identical(adjustment_covariate_pattern, "omit_X3_add_X4")) {
+    c("X1", "X2", "X4")
+  } else if (identical(adjustment_covariate_pattern, "omit_X3")) {
+    c("X1", "X2")
+  } else {
+    intersect(paste0("X", seq_len(5L)), names(dat))
+  }
+  attr(dat, "adjustment_covariates") <- adjustment_names
+  dat[]
 }
 
 generate_trial_data <- function(N,
@@ -155,6 +184,8 @@ generate_trial_data <- function(N,
                                 outcome_shape = "linear",
                                 effect_heterogeneity = "homogeneous",
                                 endpoint_prognosis_pattern = "shared",
+                                n_noise_covariates = 0L,
+                                adjustment_covariate_pattern = "all_available",
                                 specification = NULL,
                                 params = default_dgm_params()) {
   generate_subject_data(
@@ -166,6 +197,8 @@ generate_trial_data <- function(N,
     outcome_shape = outcome_shape,
     effect_heterogeneity = effect_heterogeneity,
     endpoint_prognosis_pattern = endpoint_prognosis_pattern,
+    n_noise_covariates = n_noise_covariates,
+    adjustment_covariate_pattern = adjustment_covariate_pattern,
     specification = specification,
     params = params
   )

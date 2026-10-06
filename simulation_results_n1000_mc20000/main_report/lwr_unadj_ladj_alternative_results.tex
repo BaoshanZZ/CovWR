@@ -1,0 +1,66 @@
+% FINAL: generated from the fixed-e, centered no-intercept LADJ simulation output.
+% Requires \usepackage{multirow} in the manuscript preamble.
+\begin{table*}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{5pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}ccccccccc@{}}
+\toprule
+\multirow[c]{2}{*}{Configuration} & \multirow[c]{2}{*}{Method} & \multicolumn{1}{c}{Point Est.} & \multicolumn{4}{c}{Precision and efficiency} & \multicolumn{2}{c}{Inference, \%} \\
+\cmidrule(lr){3-3} \cmidrule(lr){4-7} \cmidrule(lr){8-9}
+ & & Bias ($\times10^{-3}$) & ESD & ASE & ASE/ESD & PVR, \% & \shortstack[c]{CProb\\(95\% MC CI)} & \shortstack[c]{Power\\(95\% MC CI)} \\
+\midrule
+\multirow[c]{2}{*}{\shortstack[c]{S1\\Reference}} & $\bar\eta_m$ & 1.57 & 0.0745 & 0.0753 & 1.010 & -- & \shortstack[c]{95.15\\(94.84, 95.44)} & \shortstack[c]{43.23\\(42.55, 43.92)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.73 & 0.0660 & 0.0663 & 1.004 & 21.5 & \shortstack[c]{95.05\\(94.74, 95.34)} & \shortstack[c]{53.35\\(52.66, 54.04)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S2\\$N=500$}} & $\bar\eta_m$ & 1.44 & 0.1064 & 0.1066 & 1.002 & -- & \shortstack[c]{95.17\\(94.86, 95.46)} & \shortstack[c]{24.37\\(23.78, 24.97)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.60 & 0.0941 & 0.0937 & 0.996 & 21.7 & \shortstack[c]{95.03\\(94.73, 95.33)} & \shortstack[c]{30.18\\(29.55, 30.82)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S3\\Allocation 1:2}} & $\bar\eta_m$ & 0.83 & 0.0788 & 0.0791 & 1.004 & -- & \shortstack[c]{95.26\\(94.96, 95.55)} & \shortstack[c]{39.37\\(38.69, 40.04)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.13 & 0.0693 & 0.0696 & 1.004 & 22.7 & \shortstack[c]{94.88\\(94.57, 95.18)} & \shortstack[c]{48.43\\(47.73, 49.12)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S4\\Weak prognosis}} & $\bar\eta_m$ & 1.15 & 0.0763 & 0.0758 & 0.993 & -- & \shortstack[c]{94.76\\(94.44, 95.06)} & \shortstack[c]{55.28\\(54.59, 55.97)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.27 & 0.0733 & 0.0728 & 0.993 & 7.8 & \shortstack[c]{94.62\\(94.29, 94.92)} & \shortstack[c]{58.74\\(58.05, 59.42)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S5\\Strong prognosis}} & $\bar\eta_m$ & 1.29 & 0.0754 & 0.0747 & 0.991 & -- & \shortstack[c]{94.85\\(94.53, 95.15)} & \shortstack[c]{30.59\\(29.96, 31.24)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.95 & 0.0596 & 0.0591 & 0.991 & 37.5 & \shortstack[c]{94.82\\(94.50, 95.12)} & \shortstack[c]{45.62\\(44.93, 46.31)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S6\\Heterogeneity}} & $\bar\eta_m$ & 1.19 & 0.0756 & 0.0753 & 0.996 & -- & \shortstack[c]{94.92\\(94.61, 95.22)} & \shortstack[c]{43.59\\(42.91, 44.28)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.13 & 0.0673 & 0.0670 & 0.995 & 20.7 & \shortstack[c]{94.95\\(94.64, 95.24)} & \shortstack[c]{52.52\\(51.83, 53.22)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S7\\Endpoint-specific}} & $\bar\eta_m$ & 1.41 & 0.0757 & 0.0758 & 1.002 & -- & \shortstack[c]{95.19\\(94.88, 95.48)} & \shortstack[c]{54.70\\(54.00, 55.38)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.47 & 0.0722 & 0.0719 & 0.996 & 9.0 & \shortstack[c]{94.97\\(94.66, 95.26)} & \shortstack[c]{59.27\\(58.58, 59.94)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S8\\Add noise}} & $\bar\eta_m$ & 1.57 & 0.0745 & 0.0753 & 1.010 & -- & \shortstack[c]{95.15\\(94.84, 95.44)} & \shortstack[c]{43.23\\(42.55, 43.92)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.77 & 0.0661 & 0.0662 & 1.002 & 21.3 & \shortstack[c]{95.03\\(94.73, 95.33)} & \shortstack[c]{53.40\\(52.70, 54.09)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S9\\Omit key}} & $\bar\eta_m$ & 1.57 & 0.0745 & 0.0753 & 1.010 & -- & \shortstack[c]{95.15\\(94.84, 95.44)} & \shortstack[c]{43.23\\(42.55, 43.92)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.87 & 0.0679 & 0.0683 & 1.007 & 17.0 & \shortstack[c]{95.14\\(94.83, 95.42)} & \shortstack[c]{50.95\\(50.26, 51.64)} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Alternative operating characteristics for the log win ratio (LWR).}
+\label{tab:sim_lwr_alternative}
+\begin{minipage}{0.98\textwidth}
+\footnotesize $\bar\eta_m$, unadjusted estimator; $\hat\eta_m^{\mathrm{lin}}$, linearly adjusted estimator; Bias is displayed in units of $10^{-3}$; ESD, empirical standard deviation; ASE, average analytical standard error; PVR, percent variance reduction relative to the unadjusted estimator computed from ESD$^2$; CProb, empirical coverage probability; MC CI, Wilson Monte Carlo confidence interval, shown in parentheses below each percentage. A dash denotes the unadjusted variance reference. Results use 20,000 Monte Carlo replications.
+Scenarios S1--S9 are defined in Table~\ref{tab:sim_scenarios}.
+The reference configuration used $N=1000$ and the smaller-sample configuration used $N=500$. Alternative truths were evaluated using $10^7$ independently generated treatment--control pairs.
+\end{minipage}
+\end{table*}

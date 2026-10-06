@@ -1,0 +1,275 @@
+% FINAL: generated from the fixed-e, centered no-intercept LADJ simulation output.
+% Requires \usepackage{multirow} in the manuscript preamble.
+\begin{table*}[t]
+\centering
+\scriptsize
+\caption{Null operating characteristics for the net benefit (NB).}
+\label{tab:sim_nb_null}
+\renewcommand{\arraystretch}{1.08}
+\setlength{\tabcolsep}{5pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}ccccccccc@{}}
+\toprule
+\multirow[c]{2}{*}{Configuration} & \multirow[c]{2}{*}{Method} & \multicolumn{1}{c}{Point Est.} & \multicolumn{4}{c}{Precision and efficiency} & \multicolumn{2}{c}{Inference, \%} \\
+\cmidrule(lr){3-3} \cmidrule(lr){4-7} \cmidrule(lr){8-9}
+ & & Bias ($\times10^{-3}$) & ESD & ASE & ASE/ESD & PVR, \% & \shortstack[c]{CProb\\(95\% MC CI)} & \shortstack[c]{Type I error\\(95\% MC CI)} \\
+\midrule
+\multirow[c]{2}{*}{\shortstack[c]{S1\\Reference}} & $\bar\eta_m$ & 0.14 & 0.0362 & 0.0363 & 1.002 & -- & \shortstack[c]{94.81\\(94.49, 95.11)} & \shortstack[c]{5.19\\(4.89, 5.51)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.17 & 0.0322 & 0.0320 & 0.995 & 21.0 & \shortstack[c]{94.78\\(94.47, 95.08)} & \shortstack[c]{5.21\\(4.92, 5.53)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S2\\$N=500$}} & $\bar\eta_m$ & -0.25 & 0.0511 & 0.0513 & 1.003 & -- & \shortstack[c]{94.79\\(94.47, 95.09)} & \shortstack[c]{5.21\\(4.91, 5.53)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.15 & 0.0454 & 0.0452 & 0.995 & 21.1 & \shortstack[c]{94.93\\(94.62, 95.23)} & \shortstack[c]{5.07\\(4.77, 5.38)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S3\\Allocation 1:2}} & $\bar\eta_m$ & -0.37 & 0.0385 & 0.0384 & 0.998 & -- & \shortstack[c]{94.89\\(94.58, 95.19)} & \shortstack[c]{5.11\\(4.81, 5.42)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.29 & 0.0343 & 0.0339 & 0.989 & 20.9 & \shortstack[c]{94.75\\(94.43, 95.05)} & \shortstack[c]{5.25\\(4.95, 5.57)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S4\\Weak prognosis}} & $\bar\eta_m$ & 0.45 & 0.0362 & 0.0361 & 0.998 & -- & \shortstack[c]{94.93\\(94.62, 95.23)} & \shortstack[c]{5.07\\(4.77, 5.38)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.41 & 0.0349 & 0.0347 & 0.994 & 7.0 & \shortstack[c]{95.05\\(94.74, 95.34)} & \shortstack[c]{4.96\\(4.66, 5.26)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S5\\Strong prognosis}} & $\bar\eta_m$ & 0.03 & 0.0365 & 0.0364 & 0.997 & -- & \shortstack[c]{95.05\\(94.74, 95.34)} & \shortstack[c]{4.95\\(4.66, 5.26)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.02 & 0.0289 & 0.0288 & 0.998 & 37.2 & \shortstack[c]{94.90\\(94.59, 95.20)} & \shortstack[c]{5.10\\(4.80, 5.41)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S6\\Heterogeneity}} & $\bar\eta_m$ & -0.32 & 0.0365 & 0.0363 & 0.993 & -- & \shortstack[c]{94.82\\(94.50, 95.12)} & \shortstack[c]{5.18\\(4.88, 5.50)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.30 & 0.0323 & 0.0320 & 0.989 & 21.5 & \shortstack[c]{94.75\\(94.43, 95.05)} & \shortstack[c]{5.25\\(4.95, 5.57)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S7\\Endpoint-specific}} & $\bar\eta_m$ & -0.14 & 0.0362 & 0.0361 & 0.999 & -- & \shortstack[c]{94.81\\(94.49, 95.11)} & \shortstack[c]{5.19\\(4.89, 5.51)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.15 & 0.0345 & 0.0343 & 0.994 & 9.1 & \shortstack[c]{94.80\\(94.49, 95.10)} & \shortstack[c]{5.20\\(4.90, 5.51)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S8\\Add noise}} & $\bar\eta_m$ & 0.14 & 0.0362 & 0.0363 & 1.002 & -- & \shortstack[c]{94.81\\(94.49, 95.11)} & \shortstack[c]{5.19\\(4.89, 5.51)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.17 & 0.0322 & 0.0320 & 0.993 & 20.8 & \shortstack[c]{94.75\\(94.44, 95.06)} & \shortstack[c]{5.24\\(4.94, 5.56)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S9\\Omit key}} & $\bar\eta_m$ & 0.14 & 0.0362 & 0.0363 & 1.002 & -- & \shortstack[c]{94.81\\(94.49, 95.11)} & \shortstack[c]{5.19\\(4.89, 5.51)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.12 & 0.0331 & 0.0330 & 0.995 & 16.3 & \shortstack[c]{94.73\\(94.41, 95.03)} & \shortstack[c]{5.27\\(4.97, 5.59)} \\
+\bottomrule
+\end{tabular}%
+}
+\begin{minipage}{0.98\textwidth}
+\footnotesize $\bar\eta_m$, unadjusted estimator; $\hat\eta_m^{\mathrm{lin}}$, linearly adjusted estimator; Bias is displayed in units of $10^{-3}$; ESD, empirical standard deviation; ASE, average analytical standard error; PVR, percent variance reduction relative to the unadjusted estimator computed from ESD$^2$; CProb, empirical coverage probability of the nominal 95\% Wald interval; MC CI, Wilson Monte Carlo confidence interval, shown in parentheses below each percentage. A dash denotes the unadjusted variance reference. Results use 20,000 Monte Carlo replications.
+Scenarios S1--S9 are defined in Table~\ref{tab:sim_scenarios}.
+The reference configuration used $N=1000$ and the smaller-sample configuration used $N=500$. Alternative truths were evaluated using $10^7$ independently generated treatment--control pairs.
+\end{minipage}
+\end{table*}
+
+\clearpage
+
+% FINAL: generated from the fixed-e, centered no-intercept LADJ simulation output.
+% Requires \usepackage{multirow} in the manuscript preamble.
+\begin{table*}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{5pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}ccccccccc@{}}
+\toprule
+\multirow[c]{2}{*}{Configuration} & \multirow[c]{2}{*}{Method} & \multicolumn{1}{c}{Point Est.} & \multicolumn{4}{c}{Precision and efficiency} & \multicolumn{2}{c}{Inference, \%} \\
+\cmidrule(lr){3-3} \cmidrule(lr){4-7} \cmidrule(lr){8-9}
+ & & Bias ($\times10^{-3}$) & ESD & ASE & ASE/ESD & PVR, \% & \shortstack[c]{CProb\\(95\% MC CI)} & \shortstack[c]{Power\\(95\% MC CI)} \\
+\midrule
+\multirow[c]{2}{*}{\shortstack[c]{S1\\Reference}} & $\bar\eta_m$ & 0.67 & 0.0358 & 0.0362 & 1.010 & -- & \shortstack[c]{95.12\\(94.81, 95.41)} & \shortstack[c]{43.49\\(42.81, 44.18)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.77 & 0.0317 & 0.0319 & 1.004 & 21.5 & \shortstack[c]{95.00\\(94.69, 95.29)} & \shortstack[c]{53.52\\(52.83, 54.22)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S2\\$N=500$}} & $\bar\eta_m$ & 0.52 & 0.0511 & 0.0511 & 1.002 & -- & \shortstack[c]{94.97\\(94.66, 95.27)} & \shortstack[c]{24.87\\(24.28, 25.47)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.63 & 0.0452 & 0.0450 & 0.996 & 21.7 & \shortstack[c]{94.89\\(94.58, 95.19)} & \shortstack[c]{30.54\\(29.91, 31.18)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S3\\Allocation 1:2}} & $\bar\eta_m$ & 0.32 & 0.0379 & 0.0380 & 1.004 & -- & \shortstack[c]{95.19\\(94.89, 95.48)} & \shortstack[c]{39.62\\(38.95, 40.30)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.48 & 0.0333 & 0.0335 & 1.004 & 22.6 & \shortstack[c]{94.78\\(94.46, 95.08)} & \shortstack[c]{48.62\\(47.93, 49.32)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S4\\Weak prognosis}} & $\bar\eta_m$ & 0.45 & 0.0362 & 0.0360 & 0.993 & -- & \shortstack[c]{94.70\\(94.38, 95.00)} & \shortstack[c]{55.61\\(54.92, 56.29)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.51 & 0.0348 & 0.0346 & 0.993 & 7.8 & \shortstack[c]{94.52\\(94.20, 94.83)} & \shortstack[c]{58.96\\(58.28, 59.64)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S5\\Strong prognosis}} & $\bar\eta_m$ & 0.56 & 0.0366 & 0.0363 & 0.991 & -- & \shortstack[c]{94.77\\(94.45, 95.07)} & \shortstack[c]{30.80\\(30.17, 31.45)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.91 & 0.0290 & 0.0287 & 0.991 & 37.5 & \shortstack[c]{94.76\\(94.44, 95.06)} & \shortstack[c]{45.83\\(45.14, 46.52)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S6\\Heterogeneity}} & $\bar\eta_m$ & 0.48 & 0.0363 & 0.0362 & 0.996 & -- & \shortstack[c]{94.84\\(94.52, 95.14)} & \shortstack[c]{43.90\\(43.21, 44.59)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.47 & 0.0323 & 0.0322 & 0.995 & 20.7 & \shortstack[c]{94.88\\(94.57, 95.18)} & \shortstack[c]{52.76\\(52.07, 53.46)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S7\\Endpoint-specific}} & $\bar\eta_m$ & 0.57 & 0.0359 & 0.0360 & 1.002 & -- & \shortstack[c]{95.16\\(94.85, 95.44)} & \shortstack[c]{54.90\\(54.20, 55.58)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.60 & 0.0343 & 0.0341 & 0.996 & 9.0 & \shortstack[c]{94.86\\(94.55, 95.16)} & \shortstack[c]{59.58\\(58.89, 60.25)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S8\\Add noise}} & $\bar\eta_m$ & 0.67 & 0.0358 & 0.0362 & 1.010 & -- & \shortstack[c]{95.12\\(94.81, 95.41)} & \shortstack[c]{43.49\\(42.81, 44.18)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.78 & 0.0318 & 0.0318 & 1.002 & 21.3 & \shortstack[c]{95.00\\(94.69, 95.29)} & \shortstack[c]{53.69\\(52.99, 54.38)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S9\\Omit key}} & $\bar\eta_m$ & 0.67 & 0.0358 & 0.0362 & 1.010 & -- & \shortstack[c]{95.12\\(94.81, 95.41)} & \shortstack[c]{43.49\\(42.81, 44.18)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.83 & 0.0326 & 0.0328 & 1.007 & 16.9 & \shortstack[c]{95.09\\(94.78, 95.38)} & \shortstack[c]{51.14\\(50.45, 51.83)} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Alternative operating characteristics for the net benefit (NB).}
+\label{tab:sim_nb_alternative}
+\begin{minipage}{0.98\textwidth}
+\footnotesize $\bar\eta_m$, unadjusted estimator; $\hat\eta_m^{\mathrm{lin}}$, linearly adjusted estimator; Bias is displayed in units of $10^{-3}$; ESD, empirical standard deviation; ASE, average analytical standard error; PVR, percent variance reduction relative to the unadjusted estimator computed from ESD$^2$; CProb, empirical coverage probability; MC CI, Wilson Monte Carlo confidence interval, shown in parentheses below each percentage. A dash denotes the unadjusted variance reference. Results use 20,000 Monte Carlo replications.
+Scenarios S1--S9 are defined in Table~\ref{tab:sim_scenarios}.
+The reference configuration used $N=1000$ and the smaller-sample configuration used $N=500$. Alternative truths were evaluated using $10^7$ independently generated treatment--control pairs.
+\end{minipage}
+\end{table*}
+
+\clearpage
+
+% FINAL: generated from the fixed-e, centered no-intercept LADJ simulation output.
+% Requires \usepackage{multirow} in the manuscript preamble.
+\begin{table*}[t]
+\centering
+\scriptsize
+\caption{Null operating characteristics for the log win odds (LWO).}
+\label{tab:sim_lwo_null}
+\renewcommand{\arraystretch}{1.08}
+\setlength{\tabcolsep}{5pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}ccccccccc@{}}
+\toprule
+\multirow[c]{2}{*}{Configuration} & \multirow[c]{2}{*}{Method} & \multicolumn{1}{c}{Point Est.} & \multicolumn{4}{c}{Precision and efficiency} & \multicolumn{2}{c}{Inference, \%} \\
+\cmidrule(lr){3-3} \cmidrule(lr){4-7} \cmidrule(lr){8-9}
+ & & Bias ($\times10^{-3}$) & ESD & ASE & ASE/ESD & PVR, \% & \shortstack[c]{CProb\\(95\% MC CI)} & \shortstack[c]{Type I error\\(95\% MC CI)} \\
+\midrule
+\multirow[c]{2}{*}{\shortstack[c]{S1\\Reference}} & $\bar\eta_m$ & 0.28 & 0.0725 & 0.0726 & 1.002 & -- & \shortstack[c]{94.91\\(94.59, 95.20)} & \shortstack[c]{5.10\\(4.80, 5.41)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.34 & 0.0644 & 0.0640 & 0.995 & 21.1 & \shortstack[c]{94.84\\(94.53, 95.14)} & \shortstack[c]{5.16\\(4.86, 5.47)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S2\\$N=500$}} & $\bar\eta_m$ & -0.49 & 0.1025 & 0.1028 & 1.003 & -- & \shortstack[c]{94.98\\(94.67, 95.28)} & \shortstack[c]{5.01\\(4.72, 5.33)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.30 & 0.0910 & 0.0906 & 0.995 & 21.2 & \shortstack[c]{95.03\\(94.71, 95.32)} & \shortstack[c]{4.98\\(4.68, 5.29)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S3\\Allocation 1:2}} & $\bar\eta_m$ & -0.74 & 0.0771 & 0.0770 & 0.998 & -- & \shortstack[c]{94.94\\(94.63, 95.24)} & \shortstack[c]{5.06\\(4.76, 5.37)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.58 & 0.0686 & 0.0679 & 0.989 & 20.9 & \shortstack[c]{94.78\\(94.47, 95.08)} & \shortstack[c]{5.21\\(4.92, 5.53)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S4\\Weak prognosis}} & $\bar\eta_m$ & 0.90 & 0.0725 & 0.0724 & 0.998 & -- & \shortstack[c]{94.97\\(94.66, 95.27)} & \shortstack[c]{5.03\\(4.73, 5.34)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 0.83 & 0.0699 & 0.0695 & 0.994 & 7.1 & \shortstack[c]{95.10\\(94.79, 95.39)} & \shortstack[c]{4.90\\(4.61, 5.21)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S5\\Strong prognosis}} & $\bar\eta_m$ & 0.05 & 0.0731 & 0.0728 & 0.997 & -- & \shortstack[c]{95.10\\(94.80, 95.40)} & \shortstack[c]{4.90\\(4.60, 5.20)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.04 & 0.0579 & 0.0577 & 0.998 & 37.3 & \shortstack[c]{94.92\\(94.61, 95.22)} & \shortstack[c]{5.08\\(4.78, 5.39)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S6\\Heterogeneity}} & $\bar\eta_m$ & -0.65 & 0.0731 & 0.0726 & 0.993 & -- & \shortstack[c]{94.91\\(94.60, 95.21)} & \shortstack[c]{5.09\\(4.79, 5.40)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.60 & 0.0648 & 0.0640 & 0.989 & 21.5 & \shortstack[c]{94.82\\(94.50, 95.12)} & \shortstack[c]{5.18\\(4.88, 5.50)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S7\\Endpoint-specific}} & $\bar\eta_m$ & -0.29 & 0.0724 & 0.0724 & 0.999 & -- & \shortstack[c]{94.88\\(94.57, 95.18)} & \shortstack[c]{5.12\\(4.82, 5.43)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.29 & 0.0690 & 0.0686 & 0.994 & 9.1 & \shortstack[c]{94.85\\(94.53, 95.15)} & \shortstack[c]{5.15\\(4.85, 5.47)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S8\\Add noise}} & $\bar\eta_m$ & 0.28 & 0.0725 & 0.0726 & 1.002 & -- & \shortstack[c]{94.91\\(94.59, 95.20)} & \shortstack[c]{5.10\\(4.80, 5.41)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.34 & 0.0645 & 0.0640 & 0.993 & 20.9 & \shortstack[c]{94.81\\(94.50, 95.11)} & \shortstack[c]{5.18\\(4.89, 5.50)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S9\\Omit key}} & $\bar\eta_m$ & 0.28 & 0.0725 & 0.0726 & 1.002 & -- & \shortstack[c]{94.91\\(94.59, 95.20)} & \shortstack[c]{5.10\\(4.80, 5.41)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & -0.24 & 0.0663 & 0.0660 & 0.995 & 16.3 & \shortstack[c]{94.80\\(94.49, 95.10)} & \shortstack[c]{5.20\\(4.90, 5.51)} \\
+\bottomrule
+\end{tabular}%
+}
+\begin{minipage}{0.98\textwidth}
+\footnotesize $\bar\eta_m$, unadjusted estimator; $\hat\eta_m^{\mathrm{lin}}$, linearly adjusted estimator; Bias is displayed in units of $10^{-3}$; ESD, empirical standard deviation; ASE, average analytical standard error; PVR, percent variance reduction relative to the unadjusted estimator computed from ESD$^2$; CProb, empirical coverage probability of the nominal 95\% Wald interval; MC CI, Wilson Monte Carlo confidence interval, shown in parentheses below each percentage. A dash denotes the unadjusted variance reference. Results use 20,000 Monte Carlo replications.
+Scenarios S1--S9 are defined in Table~\ref{tab:sim_scenarios}.
+The reference configuration used $N=1000$ and the smaller-sample configuration used $N=500$. Alternative truths were evaluated using $10^7$ independently generated treatment--control pairs.
+\end{minipage}
+\end{table*}
+
+\clearpage
+
+% FINAL: generated from the fixed-e, centered no-intercept LADJ simulation output.
+% Requires \usepackage{multirow} in the manuscript preamble.
+\begin{table*}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{5pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}ccccccccc@{}}
+\toprule
+\multirow[c]{2}{*}{Configuration} & \multirow[c]{2}{*}{Method} & \multicolumn{1}{c}{Point Est.} & \multicolumn{4}{c}{Precision and efficiency} & \multicolumn{2}{c}{Inference, \%} \\
+\cmidrule(lr){3-3} \cmidrule(lr){4-7} \cmidrule(lr){8-9}
+ & & Bias ($\times10^{-3}$) & ESD & ASE & ASE/ESD & PVR, \% & \shortstack[c]{CProb\\(95\% MC CI)} & \shortstack[c]{Power\\(95\% MC CI)} \\
+\midrule
+\multirow[c]{2}{*}{\shortstack[c]{S1\\Reference}} & $\bar\eta_m$ & 1.52 & 0.0720 & 0.0727 & 1.010 & -- & \shortstack[c]{95.15\\(94.84, 95.44)} & \shortstack[c]{43.24\\(42.56, 43.93)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.67 & 0.0638 & 0.0641 & 1.004 & 21.5 & \shortstack[c]{95.05\\(94.74, 95.34)} & \shortstack[c]{53.36\\(52.67, 54.06)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S2\\$N=500$}} & $\bar\eta_m$ & 1.39 & 0.1028 & 0.1030 & 1.002 & -- & \shortstack[c]{95.16\\(94.85, 95.45)} & \shortstack[c]{24.38\\(23.79, 24.98)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.54 & 0.0910 & 0.0906 & 0.996 & 21.7 & \shortstack[c]{95.03\\(94.71, 95.32)} & \shortstack[c]{30.20\\(29.57, 30.84)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S3\\Allocation 1:2}} & $\bar\eta_m$ & 0.83 & 0.0762 & 0.0765 & 1.004 & -- & \shortstack[c]{95.27\\(94.96, 95.55)} & \shortstack[c]{39.30\\(38.62, 39.97)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.12 & 0.0670 & 0.0673 & 1.004 & 22.7 & \shortstack[c]{94.86\\(94.55, 95.16)} & \shortstack[c]{48.38\\(47.69, 49.08)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S4\\Weak prognosis}} & $\bar\eta_m$ & 1.10 & 0.0730 & 0.0725 & 0.993 & -- & \shortstack[c]{94.77\\(94.46, 95.07)} & \shortstack[c]{55.29\\(54.60, 55.98)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.21 & 0.0701 & 0.0696 & 0.993 & 7.8 & \shortstack[c]{94.61\\(94.29, 94.91)} & \shortstack[c]{58.73\\(58.05, 59.41)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S5\\Strong prognosis}} & $\bar\eta_m$ & 1.26 & 0.0736 & 0.0729 & 0.991 & -- & \shortstack[c]{94.84\\(94.53, 95.14)} & \shortstack[c]{30.59\\(29.96, 31.24)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.91 & 0.0582 & 0.0576 & 0.991 & 37.6 & \shortstack[c]{94.82\\(94.50, 95.12)} & \shortstack[c]{45.63\\(44.94, 46.32)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S6\\Heterogeneity}} & $\bar\eta_m$ & 1.15 & 0.0730 & 0.0727 & 0.996 & -- & \shortstack[c]{94.92\\(94.60, 95.21)} & \shortstack[c]{43.60\\(42.92, 44.29)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.08 & 0.0650 & 0.0647 & 0.995 & 20.8 & \shortstack[c]{94.95\\(94.64, 95.24)} & \shortstack[c]{52.53\\(51.84, 53.22)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S7\\Endpoint-specific}} & $\bar\eta_m$ & 1.34 & 0.0724 & 0.0725 & 1.002 & -- & \shortstack[c]{95.20\\(94.89, 95.49)} & \shortstack[c]{54.70\\(54.01, 55.39)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.39 & 0.0690 & 0.0688 & 0.996 & 9.0 & \shortstack[c]{94.95\\(94.64, 95.25)} & \shortstack[c]{59.28\\(58.60, 59.96)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S8\\Add noise}} & $\bar\eta_m$ & 1.52 & 0.0720 & 0.0727 & 1.010 & -- & \shortstack[c]{95.15\\(94.84, 95.44)} & \shortstack[c]{43.24\\(42.56, 43.93)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.71 & 0.0639 & 0.0640 & 1.002 & 21.3 & \shortstack[c]{95.03\\(94.71, 95.32)} & \shortstack[c]{53.41\\(52.72, 54.11)} \\
+\addlinespace[1pt]
+\cmidrule(lr){1-9}
+\addlinespace[1pt]
+\multirow[c]{2}{*}{\shortstack[c]{S9\\Omit key}} & $\bar\eta_m$ & 1.52 & 0.0720 & 0.0727 & 1.010 & -- & \shortstack[c]{95.15\\(94.84, 95.44)} & \shortstack[c]{43.24\\(42.56, 43.93)} \\
+ & $\hat\eta_m^{\mathrm{lin}}$ & 1.80 & 0.0656 & 0.0660 & 1.007 & 17.0 & \shortstack[c]{95.14\\(94.83, 95.42)} & \shortstack[c]{50.95\\(50.26, 51.64)} \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Alternative operating characteristics for the log win odds (LWO).}
+\label{tab:sim_lwo_alternative}
+\begin{minipage}{0.98\textwidth}
+\footnotesize $\bar\eta_m$, unadjusted estimator; $\hat\eta_m^{\mathrm{lin}}$, linearly adjusted estimator; Bias is displayed in units of $10^{-3}$; ESD, empirical standard deviation; ASE, average analytical standard error; PVR, percent variance reduction relative to the unadjusted estimator computed from ESD$^2$; CProb, empirical coverage probability; MC CI, Wilson Monte Carlo confidence interval, shown in parentheses below each percentage. A dash denotes the unadjusted variance reference. Results use 20,000 Monte Carlo replications.
+Scenarios S1--S9 are defined in Table~\ref{tab:sim_scenarios}.
+The reference configuration used $N=1000$ and the smaller-sample configuration used $N=500$. Alternative truths were evaluated using $10^7$ independently generated treatment--control pairs.
+\end{minipage}
+\end{table*}

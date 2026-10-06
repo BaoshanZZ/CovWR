@@ -1,0 +1,18 @@
+"Method","Covariate","beta_w","beta_l"
+"LADJ sensitivity using all eligible complete baseline covariates","X_sex_code",0.0699064831473368,-0.104654462866083
+"LADJ sensitivity using all eligible complete baseline covariates","X_age_years",-0.00273122140473164,0.00495269787235562
+"LADJ sensitivity using all eligible complete baseline covariates","X_education_years",-0.00658771681141329,0.011218812358074
+"LADJ sensitivity using all eligible complete baseline covariates","X_hypertension",0.214819420279367,0.136893593864034
+"LADJ sensitivity using all eligible complete baseline covariates","X_dyslipidemia",-0.0402215938677541,0.0914251127866874
+"LADJ sensitivity using all eligible complete baseline covariates","X_diabetes",0.124397074069253,0.0551091922137009
+"LADJ sensitivity using all eligible complete baseline covariates","X_heart_failure",-0.14151300370916,0.0319819268076107
+"LADJ sensitivity using all eligible complete baseline covariates","X_prior_ami",-0.177864253273701,-0.00969818060762751
+"LADJ sensitivity using all eligible complete baseline covariates","X_prior_pci",0.264484948226624,0.10395536009493
+"LADJ sensitivity using all eligible complete baseline covariates","X_prior_cabg",0.407526108720518,0.101222887490056
+"LADJ sensitivity using all eligible complete baseline covariates","X_antihypertensive_baseline",0.180401737957488,-0.110641887773011
+"LADJ sensitivity using all eligible complete baseline covariates","X_oral_hypoglycemic_baseline",-0.149461145184382,0.115103781189172
+"LADJ sensitivity using all eligible complete baseline covariates","X_statin_baseline",-0.374204182858613,-0.010394912403472
+"LADJ sensitivity using all eligible complete baseline covariates","X_procedure_stent_vs_balloon",0.451957411596366,0.245234283318779
+"LADJ sensitivity using all eligible complete baseline covariates","X_procedure_pharmacologic_stent_vs_balloon",0.357819764335198,0.0167825294656381
+"LADJ sensitivity using all eligible complete baseline covariates","X_smoking_baseline_1_vs_0",-0.0142341676667306,0.0209839497577789
+"LADJ sensitivity using all eligible complete baseline covariates","X_smoking_baseline_2_vs_0",-0.04379221108576,0.133680938567842

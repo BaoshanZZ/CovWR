@@ -1,0 +1,4 @@
+"Trial","Population","Role","N","Treatment_code_A","Known_randomization_probability"
+"Trial 3","All randomized","Total",6030,,0.5
+"Trial 3","Usual Care","Control",2971,0,0.5
+"Trial 3","Alert","Intervention",3059,1,0.5

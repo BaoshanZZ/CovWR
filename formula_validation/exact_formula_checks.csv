@@ -1,0 +1,40 @@
+check,observed,target,tolerance,relation,error,passed
+Hierarchical kernel partitions every pair into win/loss/tie,0,0,0,absolute,0,TRUE
+Win and loss kernels are mutually exclusive,0,0,0,absolute,0,TRUE
+Hoeffding-Hajek projection and degenerate remainder decompose U exactly,0.05,0.05,1e-15,absolute,1.38777878078145e-17,TRUE
+Differences exactly equal to continuous thresholds remain tied,1,1,0,absolute,0,TRUE
+U-statistic win probability equals the pairwise mean,0.495192307692308,0.495192307692308,1e-15,absolute,0,TRUE
+U-statistic loss probability equals the pairwise mean,0.473214285714286,0.473214285714286,1e-15,absolute,0,TRUE
+All four empirical placement functions are arm-wise centered,1.92209585142687e-17,0,1e-14,absolute,1.92209585142687e-17,TRUE
+Estimated elementary IFs have empirical mean zero,3.86554214563499e-17,0,1e-14,absolute,3.86554214563499e-17,TRUE
+Elementary IF uses the prespecified allocation probability,0.4,0.4,0,absolute,0,TRUE
+NB analytic gradient matches numerical differentiation,2.67554867150466e-11,0,1e-08,absolute,2.67554867150466e-11,TRUE
+LWR analytic gradient matches numerical differentiation,1.00633723576493e-10,0,1e-08,absolute,1.00633723576493e-10,TRUE
+LWO analytic gradient matches numerical differentiation,6.13216144529361e-11,0,1e-08,absolute,6.13216144529361e-11,TRUE
+NB unadjusted covariance and score variance formulas agree,0.00549017733954108,0.00549017733954108,1e-15,absolute,8.67361737988404e-19,TRUE
+LWR unadjusted covariance and score variance formulas agree,0.0234436780264236,0.0234436780264236,1e-15,absolute,0,TRUE
+LWO unadjusted covariance and score variance formulas agree,0.0219819402541894,0.0219819402541894,1e-15,absolute,6.93889390390723e-18,TRUE
+LADJ feature columns are sample centered,2.22044604925031e-17,0,1e-14,absolute,2.22044604925031e-17,TRUE
+LADJ uses no intercept column,0,0,0,absolute,0,TRUE
+Closed-form LADJ coefficients satisfy both normal equations,2.83731371730767e-14,0,1e-10,absolute,2.83731371730767e-14,TRUE
+Sample-centering imbalance identity holds,1.73472347597681e-18,0,1e-14,absolute,1.73472347597681e-18,TRUE
+LADJ imbalance and direct augmentation estimators agree,0,0,1e-14,absolute,0,TRUE
+Direct and weighted flexible-learning risk criteria are identical,54.1427842706488,54.1427842706488,1e-12,absolute,0,TRUE
+Adjusted elementary IF equals psi minus (A-e)b(X),0,0,0,absolute,0,TRUE
+NB common elementary projection equals direct measure projection,7.7715611723761e-16,0,1e-12,absolute,7.7715611723761e-16,TRUE
+NB linear projection has finite-sample empirical no-loss,0.900659883072032,1.31764256148986,1e-12,less_equal,-0.416982678417828,TRUE
+NB adjusted covariance and score variance formulas agree,0.00375274951280013,0.00375274951280013,1e-15,absolute,0,TRUE
+LWR common elementary projection equals direct measure projection,8.88178419700125e-16,0,1e-12,absolute,8.88178419700125e-16,TRUE
+LWR linear projection has finite-sample empirical no-loss,3.84569973681168,5.62648272634166,1e-12,less_equal,-1.78078298952999,TRUE
+LWR adjusted covariance and score variance formulas agree,0.0160485382010269,0.0160485382010269,1e-15,absolute,3.46944695195361e-18,TRUE
+LWO common elementary projection equals direct measure projection,8.88178419700125e-16,0,1e-12,absolute,8.88178419700125e-16,TRUE
+LWO linear projection has finite-sample empirical no-loss,3.60612244643623,5.27566566100546,1e-12,less_equal,-1.66954321456923,TRUE
+LWO adjusted covariance and score variance formulas agree,0.015054338505263,0.015054338505263,1e-15,absolute,0,TRUE
+"All three null gradients are proportional to (1,-1)",0,0,1e-14,absolute,0,TRUE
+Optimal conditional-contrast residual is orthogonal to augmentation,-4.33680868994202e-18,0,1e-14,absolute,4.33680868994202e-18,TRUE
+Randomization makes the optimal augmentation term mean zero,-4.16333634234434e-17,0,1e-14,absolute,4.16333634234434e-17,TRUE
+Optimal augmentation Pythagorean variance identity holds,5.55111512312578e-17,0,1e-14,absolute,5.55111512312578e-17,TRUE
+Optimal augmentation has no larger risk than zero augmentation,0.0464,0.452,1e-14,less_equal,-0.4056,TRUE
+Arm-wise centered IF has zero population intercept coefficient,0,0,1e-14,absolute,0,TRUE
+Centered linear projection recovers the conditional-contrast slope,1.2,1.2,1e-14,absolute,2.22044604925031e-16,TRUE
+Centered linear variance-reduction closed form holds,0.3456,0.3456,1e-14,absolute,0,TRUE
