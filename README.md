@@ -29,7 +29,7 @@ R/
   generate_simulation_results_tables.R
   validate_method_formulas.R
 
-simulation_results_n1000_mc20000/
+simulation_results/
   scenario_grid.csv
   simulation_summary.csv
   simulation_truth.csv
@@ -58,8 +58,9 @@ The final simulation uses a one-factor-at-a-time design with:
 - UNADJ and LADJ as the primary methods.
 
 The final aggregate results and manuscript-ready figures/tables are stored in
-simulation_results_n1000_mc20000/. Replication-level raw results and scenario chunk files
-are intentionally omitted.
+simulation_results/. These results use reference N = 1000, comparator N = 500, and
+20,000 Monte Carlo replications per scenario. Replication-level raw results and scenario
+chunk files are intentionally omitted.
 
 ### Smoke test
 
@@ -76,21 +77,21 @@ Rscript -e "source('R/run_simulation.R'); run_simulation(
 
 ~~~bash
 Rscript R/generate_final_lwr_figures.R \
-  --input-dir=simulation_results_n1000_mc20000 \
-  --output-dir=simulation_results_n1000_mc20000/main_report
+  --input-dir=simulation_results \
+  --output-dir=simulation_results/main_report
 ~~~
 
 ### Regenerate result tables
 
 ~~~bash
 Rscript R/generate_simulation_results_tables.R \
-  --input-dir=simulation_results_n1000_mc20000 \
-  --output-dir=simulation_results_n1000_mc20000/main_report \
+  --input-dir=simulation_results \
+  --output-dir=simulation_results/main_report \
   --estimands=LWR
 
 Rscript R/generate_simulation_results_tables.R \
-  --input-dir=simulation_results_n1000_mc20000 \
-  --output-dir=simulation_results_n1000_mc20000/supplementary_report \
+  --input-dir=simulation_results \
+  --output-dir=simulation_results/supplementary_report \
   --estimands=NB,LWO
 ~~~
 

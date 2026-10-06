@@ -64,7 +64,7 @@ format_configuration <- function(label) {
 project_dir <- local_project_dir()
 input_dir <- parse_arg(
   "input-dir",
-  file.path(project_dir, "simulation_results_n1000_mc20000")
+  file.path(project_dir, "simulation_results")
 )
 output_dir <- parse_arg("output-dir", file.path(input_dir, "main_report"))
 requested_estimands <- trimws(strsplit(parse_arg("estimands", "LWR"), ",", fixed = TRUE)[[1L]])

@@ -14,7 +14,7 @@ wilson <- function(p, n) {
   list(low = pmax(0, center - half), high = pmin(1, center + half))
 }
 
-input_dir <- parse_arg("input-dir", "simulation_results_n1000_mc20000")
+input_dir <- parse_arg("input-dir", "simulation_results")
 output_dir <- parse_arg("output-dir", file.path(input_dir, "main_report"))
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
