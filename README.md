@@ -37,11 +37,10 @@ simulation_results_n1000_mc20000/
   supplementary_report/
 
 RealAna/
-  analysis_trials3_5_win_ladj.R
   Trial3/
-  Trial5/
-  Trial23/
-  Trial88/
+    analysis_aki_alert_win_ladj.R
+    trial3_dictionary.csv
+    output/
 ~~~
 
 Cluster submission scripts, intermediate simulation chunks, and scheduler logs are not
@@ -100,10 +99,10 @@ Rscript R/generate_simulation_results_tables.R \
 The real-data directory contains analysis scripts, data dictionaries, numerical outputs,
 quality-control results, and manuscript-ready material.
 
-The shared Trial 3/Trial 5 analysis is run with:
+The AKI alert trial analysis is run with:
 
 ~~~bash
-Rscript RealAna/analysis_trials3_5_win_ladj.R
+Rscript RealAna/Trial3/analysis_aki_alert_win_ladj.R
 ~~~
 
 The .rds source datasets are not distributed through this repository. To reproduce an

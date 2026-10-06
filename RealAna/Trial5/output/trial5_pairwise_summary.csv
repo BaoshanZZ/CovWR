@@ -1,2 +1,0 @@
-"Trial","Horizon_days","N","n1","n0","N_pairs","Treatment_wins","Treatment_losses","Final_ties","tau_w","tau_l","tau_tie","Decided_at_death_n","Decided_at_death_percent","Decided_at_dialysis_n","Decided_at_dialysis_percent","Decided_at_AKI_progression_n","Decided_at_AKI_progression_percent","Final_ties_percent"
-"Trial 5",14,5060,2532,2528,6400896,1377864,1238454,3784578,0.215261113444118,0.193481350110984,0.591257536444898,1210916,18.9179139920411,322597,5.039872542844,1082805,16.9164598206251,59.1257536444898

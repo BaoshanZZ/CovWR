@@ -1,7 +1,0 @@
-"HCE_definition","Method","Measure","Unadjusted_variance","Adjusted_variance","Variance_reduction_percent","Relative_efficiency"
-"Threshold-free SOFA","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","NB",0.0146844216683047,0.0137334249807641,6.47622840736882,1.06924686950798
-"Threshold-free SOFA","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","WR",0.0599161741658384,0.0569828483793951,4.89571610217345,1.05147734572538
-"Threshold-free SOFA","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","WO",0.0596370063951258,0.0567178778841437,4.8948273688344,1.05146751994045
-"2-point SOFA margin","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","NB",0.014340276968906,0.0136532584712302,4.79083144046229,1.05031901352511
-"2-point SOFA margin","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","WR",0.058673554508168,0.0566434938213858,3.45992449886369,1.0358392561939
-"2-point SOFA margin","LADJ sensitivity including baseline TM with pooled imputation + missing indicator","WO",0.0584008906272664,0.0563772033441811,3.46516510510279,1.03589548901053

@@ -9,12 +9,10 @@ script_path <- function() {
   if (length(file_arg) == 1L) {
     return(normalizePath(sub("^--file=", "", file_arg)))
   }
-  normalizePath("RealAna/analysis_trials3_5_win_ladj.R")
+  normalizePath("RealAna/Trial3/analysis_aki_alert_win_ladj.R")
 }
 
-project_dir <- dirname(dirname(script_path()))
-comparison_output_dir <- file.path(project_dir, "RealAna", "Trial3_Trial5_output")
-dir.create(comparison_output_dir, recursive = TRUE, showWarnings = FALSE)
+project_dir <- dirname(dirname(dirname(script_path())))
 
 stop_analysis <- function(...) stop(..., call. = FALSE)
 assert_true <- function(condition, message) {
@@ -76,43 +74,6 @@ trial_configs <- list(
       stringsAsFactors = FALSE
     ),
     baseline_aki_note = "No true baseline AKI-stage variable is present in the dictionary."
-  ),
-  Trial5 = list(
-    trial_id = 5L,
-    data_file = file.path(project_dir, "RealAna", "Trial5", "trial5.rds"),
-    dictionary_file = file.path(project_dir, "RealAna", "Trial5", "trial5_dictionary.csv"),
-    output_dir = file.path(project_dir, "RealAna", "Trial5", "output"),
-    treatment = "Treatment",
-    intervention = "Alert",
-    control = "Usual Care",
-    composite = "YP_composite_14d",
-    outcomes = c(
-      death = "YS_death_14d",
-      dialysis = "YS_dialysis_14d",
-      aki = "YS_aki_progression_14d"
-    ),
-    candidates = data.frame(
-      Clinical_covariate = c(
-        "Hospital / study site", "Age (continuous)", "Age category (fallback)",
-        "Sex", "ICU status", "Baseline serum creatinine", "Baseline AKI stage",
-        "Elixhauser comorbidity score", "Diabetes", "Congestive heart failure"
-      ),
-      Variable = c(
-        "X_hospital_0m", "X_age_0m", "X_age_over_90_0m",
-        "X_sex_0m", "X_icu_0m", "X_creat_0m", NA,
-        "X_elx_score_pmhx_0m", "X_diabetes_elx_pmhx_0m", "X_chf_elx_pmhx_0m"
-      ),
-      Candidate_type = c(
-        "core", "age_continuous", "age_category", "core", "core", "core",
-        "unavailable", "core", "core", "core"
-      ),
-      Categorical = c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, NA, FALSE, TRUE, TRUE),
-      stringsAsFactors = FALSE
-    ),
-    baseline_aki_note = paste(
-      "No true baseline AKI-stage variable is present;",
-      "YS_aki_stage_14d is post-randomization and was excluded."
-    )
   )
 )
 
@@ -1086,94 +1047,8 @@ analyze_trial <- function(config, trial_label, prepared) {
   )
 }
 
-# All mappings and covariate eligibility decisions are printed before pairwise
-# construction or model fitting begins in either trial.
-prepared_trials <- lapply(names(trial_configs), function(name) {
-  prepare_trial(trial_configs[[name]], sub("Trial", "Trial ", name))
-})
-names(prepared_trials) <- names(trial_configs)
+trial_label <- "AKI alert trial"
+prepared <- prepare_trial(trial_configs$Trial3, trial_label)
+analysis <- analyze_trial(trial_configs$Trial3, trial_label, prepared)
 
-analyses <- lapply(names(trial_configs), function(name) {
-  analyze_trial(
-    trial_configs[[name]],
-    sub("Trial", "Trial ", name),
-    prepared_trials[[name]]
-  )
-})
-names(analyses) <- names(trial_configs)
-
-comparison_rows <- do.call(rbind, lapply(analyses, function(x) {
-  lwr <- x$results[x$results$Estimand == "LWR", ]
-  unadj <- lwr[lwr$Method == "UNADJ", ]
-  ladj <- lwr[lwr$Method == "LADJ", ]
-  data.frame(
-    Trial = x$trial,
-    LWR_UNADJ = unadj$Estimate,
-    LWR_LADJ = ladj$Estimate,
-    LWR_UNADJ_ASE = unadj$ASE,
-    LWR_LADJ_ASE = ladj$ASE,
-    LWR_LADJ_P_value = ladj$P_value,
-    LWR_LADJ_z = ladj$Test_statistic,
-    LWR_ASE_ratio = ladj$ASE_ratio_LADJ_to_UNADJ,
-    LWR_relative_efficiency = ladj$Relative_efficiency_vs_UNADJ,
-    LWR_variance_reduction_percent = ladj$Percent_variance_reduction,
-    LWR_point_change_in_UNADJ_ASE =
-      abs(ladj$Estimate - unadj$Estimate) / unadj$ASE,
-    Unadjusted_tie_percent = 100 * x$pairwise$tau_tie,
-    stringsAsFactors = FALSE
-  )
-}))
-write_csv(
-  comparison_rows,
-  file.path(comparison_output_dir, "trial3_vs_trial5_comparison.csv")
-)
-
-clearer_trial <- comparison_rows$Trial[[which.max(abs(comparison_rows$LWR_LADJ_z))]]
-larger_gain_trial <- comparison_rows$Trial[[
-  which.max(comparison_rows$LWR_variance_reduction_percent)
-]]
-all_ase_reduced <- all(comparison_rows$LWR_ASE_ratio < 1)
-comparison_report <- c(
-  "# Trial 3 versus Trial 5",
-  "",
-  markdown_table(comparison_rows, digits = 6L),
-  "",
-  paste0(
-    "- The clearer hierarchical treatment signal, judged by the absolute LADJ LWR Wald ",
-    "statistic, was in ", clearer_trial,
-    "; neither trial rejected the null at the two-sided 0.05 level."
-  ),
-  paste0(
-    "- The larger LADJ precision gain for LWR was in ", larger_gain_trial, "."
-  ),
-  paste0(
-    "- LADJ reduced the LWR ASE in both trials: ",
-    ifelse(all_ase_reduced, "yes.", "no; inspect the table above.")
-  ),
-  paste0(
-    "- The LADJ-minus-UNADJ LWR changes were ",
-    paste0(
-      comparison_rows$Trial,
-      " = ",
-      format_number(comparison_rows$LWR_LADJ - comparison_rows$LWR_UNADJ, 4L),
-      collapse = "; "
-    ),
-    ". In absolute terms these corresponded to ",
-    paste0(
-      comparison_rows$Trial,
-      " = ",
-      format_number(comparison_rows$LWR_point_change_in_UNADJ_ASE, 3L),
-      " unadjusted ASE",
-      collapse = "; "
-    ),
-    ". These are modest relative to sampling uncertainty, but in Trial 5 the movement ",
-    "toward the null outweighed the ASE reduction and increased the p-value."
-  )
-)
-writeLines(
-  comparison_report,
-  file.path(comparison_output_dir, "trial3_vs_trial5_comparison.md")
-)
-
-cat("\nAll Trial 3 and Trial 5 analyses completed.\n")
-cat("Cross-trial output:", comparison_output_dir, "\n")
+cat("\nAKI alert trial analysis completed.\n")

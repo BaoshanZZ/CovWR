@@ -1,2 +1,0 @@
-"N","n1","n0","N_pairs","Treatment_wins","Treatment_losses","Final_ties","tau_w","tau_l","tau_tie","Decided_by_death","Decided_by_death_percent","Decided_by_AMI","Decided_by_AMI_percent","Decided_by_revascularization","Decided_by_revascularization_percent","Final_ties_percent","Final_ties_at_death","Final_ties_at_revascularization"
-200,101,99,9999,1230,983,7786,0.123012301230123,0.0983098309830983,0.778677867786779,1132,11.3211321132113,636,6.36063606360636,445,4.45044504450445,77.8677867786779,35,7751

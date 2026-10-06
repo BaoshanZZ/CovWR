@@ -1,4 +1,4 @@
-# Trial 3: 14-day hierarchical win analysis
+# AKI alert trial: 14-day hierarchical win analysis
 
 ## Verified mappings
 
@@ -20,9 +20,9 @@
 
 | Trial | Population | Role | N | Treatment_code_A | Known_randomization_probability |
 | --- | --- | --- | --- | --- | --- |
-| Trial 3 | All randomized | Total | 6030.0000 |  | 0.5000 |
-| Trial 3 | Usual Care | Control | 2971.0000 | 0.0000 | 0.5000 |
-| Trial 3 | Alert | Intervention | 3059.0000 | 1.0000 | 0.5000 |
+| AKI alert trial | All randomized | Total | 6030.0000 |  | 0.5000 |
+| AKI alert trial | Usual Care | Control | 2971.0000 | 0.0000 | 0.5000 |
+| AKI alert trial | Alert | Intervention | 3059.0000 | 1.0000 | 0.5000 |
 
 ## Outcome missingness
 
@@ -43,7 +43,7 @@
 
 | Trial | Horizon_days | N | n1 | n0 | N_pairs | Treatment_wins | Treatment_losses | Final_ties | tau_w | tau_l | tau_tie | Decided_at_death_n | Decided_at_death_percent | Decided_at_dialysis_n | Decided_at_dialysis_percent | Decided_at_AKI_progression_n | Decided_at_AKI_progression_percent | Final_ties_percent |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Trial 3 | 14.0000 | 6030.0000 | 3059.0000 | 2971.0000 | 9088289.0000 | 1637306.0000 | 1669083.0000 | 5781900.0000 | 0.1802 | 0.1837 | 0.6362 | 1474587.0000 | 16.2251 | 352945.0000 | 3.8835 | 1478857.0000 | 16.2721 | 63.6192 |
+| AKI alert trial | 14.0000 | 6030.0000 | 3059.0000 | 2971.0000 | 9088289.0000 | 1637306.0000 | 1669083.0000 | 5781900.0000 | 0.1802 | 0.1837 | 0.6362 | 1474587.0000 | 16.2251 | 352945.0000 | 3.8835 | 1478857.0000 | 16.2721 | 63.6192 |
 
 ## Table B: prespecified baseline covariate audit
 
@@ -68,29 +68,29 @@
 
 | Trial | Estimand | Method | Estimate | ASE | CI_lower | CI_upper | P_value | ASE_ratio_LADJ_to_UNADJ | Relative_efficiency_vs_UNADJ | Percent_variance_reduction |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Trial 3 | NB | UNADJ | -0.003496 | 0.010602 | -0.024277 | 0.017284 | 0.741566 | 1.000000 | 1.000000 | 0.000000 |
-| Trial 3 | NB | LADJ | -0.007910 | 0.010105 | -0.027716 | 0.011895 | 0.433738 | 0.953091 | 1.100857 | 9.161707 |
-| Trial 3 | LWR | UNADJ | -0.019222 | 0.058284 | -0.133456 | 0.095012 | 0.741549 | 1.000000 | 1.000000 | 0.000000 |
-| Trial 3 | LWR | LADJ | -0.043435 | 0.055492 | -0.152198 | 0.065328 | 0.433792 | 0.952102 | 1.103146 | 9.350192 |
-| Trial 3 | WR | UNADJ | 0.980961 | 0.057174 | 0.875066 | 1.099672 | 0.741549 | 1.000000 | 1.000000 | 0.000000 |
-| Trial 3 | WR | LADJ | 0.957495 | 0.053133 | 0.858819 | 1.067509 | 0.433792 | 0.929326 | 1.157881 | 13.635346 |
-| Trial 3 | LWO | UNADJ | -0.006993 | 0.021205 | -0.048554 | 0.034568 | 0.741568 | 1.000000 | 1.000000 | 0.000000 |
-| Trial 3 | LWO | LADJ | -0.015821 | 0.020211 | -0.055435 | 0.023793 | 0.433757 | 0.953139 | 1.100746 | 9.152559 |
-| Trial 3 | WO | UNADJ | 0.993031 | 0.021057 | 0.952606 | 1.035173 | 0.741568 | 1.000000 | 1.000000 | 0.000000 |
-| Trial 3 | WO | LADJ | 0.984303 | 0.019894 | 0.946074 | 1.024078 | 0.433757 | 0.944762 | 1.120354 | 10.742507 |
+| AKI alert trial | NB | UNADJ | -0.003496 | 0.010602 | -0.024277 | 0.017284 | 0.741566 | 1.000000 | 1.000000 | 0.000000 |
+| AKI alert trial | NB | LADJ | -0.007910 | 0.010105 | -0.027716 | 0.011895 | 0.433738 | 0.953091 | 1.100857 | 9.161707 |
+| AKI alert trial | LWR | UNADJ | -0.019222 | 0.058284 | -0.133456 | 0.095012 | 0.741549 | 1.000000 | 1.000000 | 0.000000 |
+| AKI alert trial | LWR | LADJ | -0.043435 | 0.055492 | -0.152198 | 0.065328 | 0.433792 | 0.952102 | 1.103146 | 9.350192 |
+| AKI alert trial | WR | UNADJ | 0.980961 | 0.057174 | 0.875066 | 1.099672 | 0.741549 | 1.000000 | 1.000000 | 0.000000 |
+| AKI alert trial | WR | LADJ | 0.957495 | 0.053133 | 0.858819 | 1.067509 | 0.433792 | 0.929326 | 1.157881 | 13.635346 |
+| AKI alert trial | LWO | UNADJ | -0.006993 | 0.021205 | -0.048554 | 0.034568 | 0.741568 | 1.000000 | 1.000000 | 0.000000 |
+| AKI alert trial | LWO | LADJ | -0.015821 | 0.020211 | -0.055435 | 0.023793 | 0.433757 | 0.953139 | 1.100746 | 9.152559 |
+| AKI alert trial | WO | UNADJ | 0.993031 | 0.021057 | 0.952606 | 1.035173 | 0.741568 | 1.000000 | 1.000000 | 0.000000 |
+| AKI alert trial | WO | LADJ | 0.984303 | 0.019894 | 0.946074 | 1.024078 | 0.433757 | 0.944762 | 1.120354 | 10.742507 |
 
 ## Elementary win/loss estimates
 
 | Trial | Method | tau_w | tau_l | tau_tie |
 | --- | --- | --- | --- | --- |
-| Trial 3 | UNADJ | 0.180156 | 0.183652 | 0.636192 |
-| Trial 3 | LADJ | 0.178194 | 0.186105 | 0.635701 |
+| AKI alert trial | UNADJ | 0.180156 | 0.183652 | 0.636192 |
+| AKI alert trial | LADJ | 0.178194 | 0.186105 | 0.635701 |
 
 ## LADJ diagnostics
 
 | Trial | Number_features | Gram_rank | Smallest_eigenvalue | Largest_eigenvalue | Condition_number | Scaled_condition_number | Max_centering_identity_error | Max_tau_formula_error | Max_scaled_fitted_value_error | Max_projection_normal_equation_error | Min_adjusted_covariance_eigenvalue |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Trial 3 | 11.000000 | 11.000000 | 45.415167 | 12327.320711 | 271.436208 | 4.200346 | 0.000000 | 0.000000 | 0.000000 | 0.000000 | 0.173186 |
+| AKI alert trial | 11.000000 | 11.000000 | 45.415167 | 12327.320711 | 271.436208 | 4.200346 | 0.000000 | 0.000000 | 0.000000 | 0.000000 | 0.173186 |
 
 ## LADJ point-estimate correction diagnostic
 

@@ -1,2 +1,0 @@
-"Method","Number_features","Gram_rank","Smallest_eigenvalue","Largest_eigenvalue","Condition_number","Scaled_condition_number","Max_centering_identity_error","Max_tau_formula_error","Max_scaled_fitted_value_error","Min_adjusted_covariance_eigenvalue"
-"LADJ",9,9,3.86557124901667,4757.57457167756,1230.75588708598,3.03579023459414,0.000000000000000971445146547012,0.00000000000000000346944695195361,0.00000000000000199840144432528,0.139213959802926

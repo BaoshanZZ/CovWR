@@ -12,6 +12,13 @@ R/*batch*.R
 R/rerun_*.R
 R/*seed_sensitivity.R
 
+# Real-data analyses retained locally but not published in this repository
+/RealAna/Trial23/
+/RealAna/Trial5/
+/RealAna/Trial88/
+/RealAna/Trial3_Trial5_output/
+/RealAna/analysis_trials3_5_win_ladj.R
+
 # Manuscript and local plotting helper are kept locally but not versioned here
 main*.tex
 R/plot_simulation_results.R
