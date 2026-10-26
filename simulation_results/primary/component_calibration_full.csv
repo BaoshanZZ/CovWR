@@ -1,0 +1,9 @@
+metric,value
+"mortality_S",0.19782
+"Harrell_C",0.700134447718585
+"AUC_S",0.721630661769699
+"D2_observed_R2",0.259673182040288
+"D2_latent_R2_diagnostic",0.260518176984655
+"D3_log_R2",0.392053130130962
+"D2_mean_survivors",7.99810516342965
+"D3_median_survivors",59.7393130794107

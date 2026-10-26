@@ -2,6 +2,38 @@
 simulation_output*/
 slurm_logs/
 *.sbatch
+*.sh
+*.bash
+*.slurm
+*.csv.gz
+*.zip
+*.png
+*.pdf
+
+# Local experiment history, scheduler infrastructure, and generated replication data
+/experiments/
+/maintenance/
+/local_archive/
+/simulation_runs/
+/manuscript_figures_eps/
+
+# Superseded simulation entry points stay local for historical reproduction.
+/R/config.R
+/R/dgm.R
+/R/estimators.R
+/R/generate_final_lwr_figures.R
+/R/generate_simulation_results_tables.R
+/R/run_simulation.R
+/R/summarize_results.R
+/R/truth.R
+/R/validate_method_formulas.R
+/R/win_kernels.R
+/formula_validation/
+
+# Manuscripts, generated tables and plotting code are not part of this release.
+*.tex
+R/*plot*.R
+R/*figure*.R
 
 # Local manuscript assembly files (generated table fragments under results are versioned)
 /simulation_*_revised.tex

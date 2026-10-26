@@ -1,0 +1,10 @@
+W,label,p,variables,reported_in_manuscript
+W0,Unadjusted,0,"",TRUE
+W1,Shared,2,X3;X4,TRUE
+W2,D1-pair (exploratory),2,X1;X2,FALSE
+W3,D1-prog,4,X1;X2;X3;X4,TRUE
+W4,D2-prog,3,X2;X3;X4,TRUE
+W5,D3-prog,3,X3;X4;X5,TRUE
+W6,Union,5,X1;X2;X3;X4;X5,TRUE
+W7,Union+5,10,X1;X2;X3;X4;X5;X6;X7;X8;X9;X10,TRUE
+W8,Union+10,15,X1;X2;X3;X4;X5;X6;X7;X8;X9;X10;X11;X12;X13;X14;X15,TRUE

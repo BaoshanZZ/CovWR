@@ -1,0 +1,15 @@
+# Exact frozen parameters; no raw datasets or local file paths.
+frozen_parameters <- list(primary = list(S = 28L, shape = 1.2, e = 0.5, sigma2 = 3.5,
+    sigma3 = 0.45, kappa1 = 1, kappa2 = 1, kappa3 = 1, theta1 = -0.229337058474529,
+    theta2 = 6.35342261397909, theta3 = 4.08371707641342, lambda0 = 0.00397249802407532,
+    pattern1 = c(0.53062825106217, 0.22314355131421, 0.336472236621213,
+    0.336472236621213, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), pattern2 = c(0,
+    0.5, 0.3, 0.8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), pattern3 = c(0,
+    0, 0.4, 0.3, 0.6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), alpha_base = c(-0.162518929497775,
+    -0.5, -0.0512932943875506), treatment_strength = 1.3125,
+    icu_margin = 2, biomarker_margin = 0.22314355131421, predictor_basis = "raw_X"),
+    primary_population_settings = list(train_n = 100000L, validation_n = 100000L,
+        truth_pairs = 10000000L, truth_chunk = 100000L, reference_n = 100000L,
+        oracle_train_n = 100000L, oracle_validation_n = 100000L,
+        placement_block = 10000L, seed_train = 2026102101L, seed_validation = 2026102102L,
+        seed_truth = 2026102104L, seed_oracle = 2026102105L))

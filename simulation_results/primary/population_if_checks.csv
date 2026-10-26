@@ -1,0 +1,7 @@
+effect,estimand,nonnegative,nested,noise_equivalent
+"null","NB",TRUE,TRUE,TRUE
+"null","LWR",TRUE,TRUE,TRUE
+"null","LWO",TRUE,TRUE,TRUE
+"alternative","NB",TRUE,TRUE,TRUE
+"alternative","LWR",TRUE,TRUE,TRUE
+"alternative","LWO",TRUE,TRUE,TRUE

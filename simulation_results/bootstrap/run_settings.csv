@@ -1,0 +1,8 @@
+setting,value
+N,200
+null_reps,10000
+alternative_reps,10000
+K,2000
+e,0.5
+trial_master_seed,2026102306
+bootstrap_seed,2026102503

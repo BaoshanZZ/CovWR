@@ -1,0 +1,19 @@
+check,value,tolerance,passed
+"Kernel partition",0,1e-10,TRUE
+"Kernel antisymmetry",0,1e-10,TRUE
+"Compressed placements",0,1e-10,TRUE
+"All 24 estimator rows retained",0,1e-10,TRUE
+"No unexpected fit failures",0,1e-10,TRUE
+"Identical unadjusted estimates across W",0,1e-10,TRUE
+"QR agrees with existing Gram fit",1.99840144432528e-15,1e-10,TRUE
+"QR normal equations",1.27467481014776e-16,1e-10,TRUE
+"Duration bounded by time alive",0,1e-10,TRUE
+"Positive survivor biomarker and structural NA after death",0,1e-10,TRUE
+"NB delta covariance equivalence",6.93889390390723e-18,1e-10,TRUE
+"LWR delta covariance equivalence",1.38777878078145e-17,1e-10,TRUE
+"LWO delta covariance equivalence",1.38777878078145e-17,1e-10,TRUE
+"Singular fits fail explicitly with all rows retained",0,0,TRUE
+"All nine sets retain 27 rows",0,0,TRUE
+"Extended fits succeed",0,0,TRUE
+"All sets reuse identical elementary win/loss estimates",0,0,TRUE
+"Additional noise coefficients are zero",0,0,TRUE
